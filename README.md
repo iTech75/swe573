@@ -12,5 +12,5 @@ Requirements for hw1 are:
 |5     | Create an "issue" for preparing a document explaining the creation of web applications using tomcat.| o |
 |6     | Create the document.                                                                                | o |
 |7     | Put this document in your git repository.                                                           | o |
-|8     | Link your development environment (Eclipse) to the git repository and test it.                      | x |
-|9     | Send me the repository information.                                                                 | x |
+|8     | Link your development environment (Eclipse) to the git repository and test it.                      | o |
+|9     | Send me the repository information.                                                                 | o |
