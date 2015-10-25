@@ -14,4 +14,3 @@ Requirements for hw1 are:
 |7     | Put this document in your git repository.                                                           | o |
 |8     | Link your development environment (Eclipse) to the git repository and test it.                      | o |
 |9     | Send me the repository information.                                                                 | o |
-
