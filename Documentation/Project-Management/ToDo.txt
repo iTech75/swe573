@@ -1,0 +1,9 @@
+* Learn Java web development
+* Learn Android mobile development
+* Decide database layer
+* Design violation type representation on forms, database etc.
+  * Different forms & table for every different types of violations
+  * or design an elegant way of representing violations so that single 
+    table & form structure can handle all types of violation at once.
+* In the light of above items create a project plan with milestones to help 
+  and monitor the progress of the project. 
