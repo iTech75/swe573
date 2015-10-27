@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="__aVP8HwiEeWhpsphXt17Tg" name="MainUseCases">
+  <packageImport xmi:id="_p69xEHwyEeWhpsphXt17Tg">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packageImport xmi:id="_XJsbsHw4EeWhpsphXt17Tg">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_WxFT8HwjEeWhpsphXt17Tg" name="WebUser"/>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_cgd4oHwjEeWhpsphXt17Tg" name="Authorized User" isLeaf="true">
+    <generalization xmi:id="_jdi4IHwmEeWhpsphXt17Tg" general="_WxFT8HwjEeWhpsphXt17Tg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_uum8sHwmEeWhpsphXt17Tg" name="Login">
+    <include xmi:id="_cxV6UHwwEeWhpsphXt17Tg" addition="_YrBlMHwwEeWhpsphXt17Tg"/>
+    <include xmi:id="_48iTYHyhEeWlkZrtOOXM9g" addition="_2Ik-AHyhEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_zztOQHwmEeWhpsphXt17Tg" memberEnd="_zz3mUHwmEeWhpsphXt17Tg _zz4NYHwmEeWhpsphXt17Tg">
+    <ownedEnd xmi:id="_zz3mUHwmEeWhpsphXt17Tg" type="_soouQHygEeWlkZrtOOXM9g" association="_zztOQHwmEeWhpsphXt17Tg"/>
+    <ownedEnd xmi:id="_zz4NYHwmEeWhpsphXt17Tg" type="_uum8sHwmEeWhpsphXt17Tg" association="_zztOQHwmEeWhpsphXt17Tg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_YrBlMHwwEeWhpsphXt17Tg" name="Forgot My Password"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_BWFCkHwxEeWhpsphXt17Tg" name="User"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_sFB_cHwzEeWhpsphXt17Tg" name="AuthorizedUser">
+    <generalization xmi:id="_uHV1cHwzEeWhpsphXt17Tg" general="_BWFCkHwxEeWhpsphXt17Tg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_S6hM4Hw1EeWhpsphXt17Tg" name="New Violation">
+    <include xmi:id="_Z3iCUHw1EeWhpsphXt17Tg" addition="_VDS3QHw1EeWhpsphXt17Tg"/>
+    <include xmi:id="_T1Qh8HylEeWlkZrtOOXM9g" addition="_QLkT4HykEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_VDS3QHw1EeWhpsphXt17Tg" name="Inform Authorized User"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_k6QI4Hw1EeWhpsphXt17Tg" memberEnd="_k6Qv8Hw1EeWhpsphXt17Tg _k6RXAHw1EeWhpsphXt17Tg">
+    <ownedEnd xmi:id="_k6Qv8Hw1EeWhpsphXt17Tg" type="_soouQHygEeWlkZrtOOXM9g" association="_k6QI4Hw1EeWhpsphXt17Tg"/>
+    <ownedEnd xmi:id="_k6RXAHw1EeWhpsphXt17Tg" type="_S6hM4Hw1EeWhpsphXt17Tg" association="_k6QI4Hw1EeWhpsphXt17Tg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_m9Aq0Hw1EeWhpsphXt17Tg" memberEnd="_m9Aq0Xw1EeWhpsphXt17Tg _m9BR4Hw1EeWhpsphXt17Tg">
+    <ownedEnd xmi:id="_m9Aq0Xw1EeWhpsphXt17Tg" type="_VDS3QHw1EeWhpsphXt17Tg" association="_m9Aq0Hw1EeWhpsphXt17Tg"/>
+    <ownedEnd xmi:id="_m9BR4Hw1EeWhpsphXt17Tg" type="_cgd4oHwjEeWhpsphXt17Tg" association="_m9Aq0Hw1EeWhpsphXt17Tg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_zz9IEHw1EeWhpsphXt17Tg" name="Violation">
+    <ownedAttribute xmi:id="_jXspoHw4EeWhpsphXt17Tg" name="photo" visibility="private">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_jXtQsHw4EeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_jXt3wHw4EeWhpsphXt17Tg"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_NDr_kHw5EeWhpsphXt17Tg" name="description" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NDsmoHw5EeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NDtNsHw5EeWhpsphXt17Tg" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_T-ywgHw5EeWhpsphXt17Tg" name="geocode">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_T-zXkHw5EeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_T-z-oHw5EeWhpsphXt17Tg" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_lakq4Hw5EeWhpsphXt17Tg" name="dateOfCreate">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/XMLPrimitiveTypes.library.uml#DateTime"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_lanHIHw5EeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_lanHIXw5EeWhpsphXt17Tg" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_SHiegHw6EeWhpsphXt17Tg" name="type">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_SHjsoHw6EeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_SHkTsHw6EeWhpsphXt17Tg" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_49kFkHyKEeWhpsphXt17Tg" name="calculatedSeverity">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_49l6wHyKEeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_49mh0HyKEeWhpsphXt17Tg" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_9UV4kHyKEeWhpsphXt17Tg" name="votedSeverity">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_9UWfoHyKEeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_9UXGsHyKEeWhpsphXt17Tg" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_y9qccHw5EeWhpsphXt17Tg" memberEnd="_y9qccXw5EeWhpsphXt17Tg _y9rqknw5EeWhpsphXt17Tg" navigableOwnedEnd="_y9qccXw5EeWhpsphXt17Tg _y9rqknw5EeWhpsphXt17Tg">
+    <name xsi:nil="true"/>
+    <ownedEnd xmi:id="_y9qccXw5EeWhpsphXt17Tg" name="user" type="_BWFCkHwxEeWhpsphXt17Tg" association="_y9qccHw5EeWhpsphXt17Tg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_y9rqkHw5EeWhpsphXt17Tg" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_y9rqkXw5EeWhpsphXt17Tg" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_y9rqknw5EeWhpsphXt17Tg" name="violations" type="_zz9IEHw1EeWhpsphXt17Tg" association="_y9qccHw5EeWhpsphXt17Tg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_y9sRoHw5EeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_y9sRoXw5EeWhpsphXt17Tg" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_G_3isHyLEeWhpsphXt17Tg" name="Vote">
+    <ownedAttribute xmi:id="_Kpps0HyLEeWhpsphXt17Tg" name="voteType">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_KpqT4HyLEeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Kpq68HyLEeWhpsphXt17Tg" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_NiYNcHyLEeWhpsphXt17Tg" name="voteValue">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NiY0gHyLEeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NiY0gXyLEeWhpsphXt17Tg" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_Unxi0HyLEeWhpsphXt17Tg" memberEnd="_UnyJ4HyLEeWhpsphXt17Tg _Unz_EXyLEeWhpsphXt17Tg" navigableOwnedEnd="_UnyJ4HyLEeWhpsphXt17Tg _Unz_EXyLEeWhpsphXt17Tg">
+    <ownedEnd xmi:id="_UnyJ4HyLEeWhpsphXt17Tg" name="violation" type="_zz9IEHw1EeWhpsphXt17Tg" association="_Unxi0HyLEeWhpsphXt17Tg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_UnzYAHyLEeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Unz_EHyLEeWhpsphXt17Tg" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_Unz_EXyLEeWhpsphXt17Tg" name="votes" type="_G_3isHyLEeWhpsphXt17Tg" association="_Unxi0HyLEeWhpsphXt17Tg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Un0mIHyLEeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Un1NMHyLEeWhpsphXt17Tg" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_OmL-YHyMEeWhpsphXt17Tg" name="Comment"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_SzTfEHyMEeWhpsphXt17Tg" memberEnd="_SzUtMHyMEeWhpsphXt17Tg _SzV7UnyMEeWhpsphXt17Tg" navigableOwnedEnd="_SzUtMHyMEeWhpsphXt17Tg _SzV7UnyMEeWhpsphXt17Tg">
+    <ownedEnd xmi:id="_SzUtMHyMEeWhpsphXt17Tg" name="violation" type="_zz9IEHw1EeWhpsphXt17Tg" association="_SzTfEHyMEeWhpsphXt17Tg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_SzV7UHyMEeWhpsphXt17Tg" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_SzV7UXyMEeWhpsphXt17Tg" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_SzV7UnyMEeWhpsphXt17Tg" name="comments" type="_OmL-YHyMEeWhpsphXt17Tg" association="_SzTfEHyMEeWhpsphXt17Tg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_SzXJcHyMEeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_SzXJcXyMEeWhpsphXt17Tg" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_bJmboHyMEeWhpsphXt17Tg" memberEnd="_bJnCsHyMEeWhpsphXt17Tg _bJoQ0XyMEeWhpsphXt17Tg" navigableOwnedEnd="_bJnCsHyMEeWhpsphXt17Tg _bJoQ0XyMEeWhpsphXt17Tg">
+    <ownedEnd xmi:id="_bJnCsHyMEeWhpsphXt17Tg" name="comments" type="_OmL-YHyMEeWhpsphXt17Tg" association="_bJmboHyMEeWhpsphXt17Tg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_bJnpwHyMEeWhpsphXt17Tg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_bJoQ0HyMEeWhpsphXt17Tg" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_bJoQ0XyMEeWhpsphXt17Tg" name="user" type="_BWFCkHwxEeWhpsphXt17Tg" association="_bJmboHyMEeWhpsphXt17Tg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_bJo34HyMEeWhpsphXt17Tg" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_bJo34XyMEeWhpsphXt17Tg" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_soouQHygEeWlkZrtOOXM9g" name="MobileUser"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_WMPkQHyhEeWlkZrtOOXM9g" name="View Nearby Violations">
+    <extend xmi:id="_fv0MQHyhEeWlkZrtOOXM9g" extendedCase="_ZzibEHyhEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_ZzibEHyhEeWlkZrtOOXM9g" name="View Violation">
+    <include xmi:id="_VACTAHylEeWlkZrtOOXM9g" addition="_QLkT4HykEeWlkZrtOOXM9g"/>
+    <include xmi:id="_eB8YYHylEeWlkZrtOOXM9g" addition="_ZQO84HylEeWlkZrtOOXM9g"/>
+    <include xmi:id="_oG85gHylEeWlkZrtOOXM9g" addition="_l6j6cHylEeWlkZrtOOXM9g"/>
+    <include xmi:id="_uItnoHylEeWlkZrtOOXM9g" addition="_qub5IHylEeWlkZrtOOXM9g"/>
+    <include xmi:id="_z9-K0HylEeWlkZrtOOXM9g" addition="_xJ2dYHylEeWlkZrtOOXM9g"/>
+    <include xmi:id="_lgzrwHynEeWlkZrtOOXM9g" addition="_3IeigHymEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_eQV9kHyhEeWlkZrtOOXM9g" memberEnd="_eQWkoHyhEeWlkZrtOOXM9g _eQWkoXyhEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_eQWkoHyhEeWlkZrtOOXM9g" type="_WxFT8HwjEeWhpsphXt17Tg" association="_eQV9kHyhEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_eQWkoXyhEeWlkZrtOOXM9g" type="_ZzibEHyhEeWlkZrtOOXM9g" association="_eQV9kHyhEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_jKjNwHyhEeWlkZrtOOXM9g" memberEnd="_jKj00HyhEeWlkZrtOOXM9g _jKj00XyhEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_jKj00HyhEeWlkZrtOOXM9g" type="_soouQHygEeWlkZrtOOXM9g" association="_jKjNwHyhEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_jKj00XyhEeWlkZrtOOXM9g" type="_WMPkQHyhEeWlkZrtOOXM9g" association="_jKjNwHyhEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_2Ik-AHyhEeWlkZrtOOXM9g" name="Register"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_ksKVAHyiEeWlkZrtOOXM9g" memberEnd="_ksKVAXyiEeWlkZrtOOXM9g _ksK8EHyiEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_ksKVAXyiEeWlkZrtOOXM9g" type="_WxFT8HwjEeWhpsphXt17Tg" association="_ksKVAHyiEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_ksK8EHyiEeWlkZrtOOXM9g" type="_uum8sHwmEeWhpsphXt17Tg" association="_ksKVAHyiEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_zBGaQHyiEeWlkZrtOOXM9g" memberEnd="_zBGaQXyiEeWlkZrtOOXM9g _zBHBUHyiEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_zBGaQXyiEeWlkZrtOOXM9g" type="_WxFT8HwjEeWhpsphXt17Tg" association="_zBGaQHyiEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_zBHBUHyiEeWlkZrtOOXM9g" type="_2Ik-AHyhEeWlkZrtOOXM9g" association="_zBGaQHyiEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_z39w0HyiEeWlkZrtOOXM9g" memberEnd="_z39w0XyiEeWlkZrtOOXM9g _z3--8HyiEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_z39w0XyiEeWlkZrtOOXM9g" type="_WxFT8HwjEeWhpsphXt17Tg" association="_z39w0HyiEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_z3--8HyiEeWlkZrtOOXM9g" type="_YrBlMHwwEeWhpsphXt17Tg" association="_z39w0HyiEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_G6GIgHykEeWlkZrtOOXM9g" name="User Settings"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_LmDhUHykEeWlkZrtOOXM9g" memberEnd="_LmDhUXykEeWlkZrtOOXM9g _LmDhUnykEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_LmDhUXykEeWlkZrtOOXM9g" type="_WxFT8HwjEeWhpsphXt17Tg" association="_LmDhUHykEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_LmDhUnykEeWlkZrtOOXM9g" type="_G6GIgHykEeWlkZrtOOXM9g" association="_LmDhUHykEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_QLkT4HykEeWlkZrtOOXM9g" name="View/Update Controls"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_ZQO84HylEeWlkZrtOOXM9g" name="Vote Severitity"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_l6j6cHylEeWlkZrtOOXM9g" name="Report Abuse"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_qub5IHylEeWlkZrtOOXM9g" name="Fix Violation"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_xJ2dYHylEeWlkZrtOOXM9g" name="Comment"/>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_54dzUHylEeWlkZrtOOXM9g" name="Admin"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_84f10HylEeWlkZrtOOXM9g" name="Reporting">
+    <include xmi:id="_GyCt0HymEeWlkZrtOOXM9g" addition="_BQAooHymEeWlkZrtOOXM9g"/>
+    <include xmi:id="_HjTLoHymEeWlkZrtOOXM9g" addition="_C5IikHymEeWlkZrtOOXM9g"/>
+    <include xmi:id="_olousHynEeWlkZrtOOXM9g" addition="_ZzibEHyhEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_-_ILIHylEeWlkZrtOOXM9g" memberEnd="_-_ILIXylEeWlkZrtOOXM9g _-_IyMHylEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_-_ILIXylEeWlkZrtOOXM9g" type="_WxFT8HwjEeWhpsphXt17Tg" association="_-_ILIHylEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_-_IyMHylEeWlkZrtOOXM9g" type="_84f10HylEeWlkZrtOOXM9g" association="_-_ILIHylEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_BQAooHymEeWlkZrtOOXM9g" name="Static reporting"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_C5IikHymEeWlkZrtOOXM9g" name="Dynamic Reporting"/>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_OYBAsHymEeWlkZrtOOXM9g" name="ACP"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_QEIkQHymEeWlkZrtOOXM9g" name="Create Dashboard"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_SLD0gHymEeWlkZrtOOXM9g" memberEnd="_SLEbkHymEeWlkZrtOOXM9g _SLEbkXymEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_SLEbkHymEeWlkZrtOOXM9g" type="_OYBAsHymEeWlkZrtOOXM9g" association="_SLD0gHymEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_SLEbkXymEeWlkZrtOOXM9g" type="_QEIkQHymEeWlkZrtOOXM9g" association="_SLD0gHymEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_WhMuUHymEeWlkZrtOOXM9g" name="View Dashboard"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_bV2wIHymEeWlkZrtOOXM9g" memberEnd="_bV2wIXymEeWlkZrtOOXM9g _bV3XMHymEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_bV2wIXymEeWlkZrtOOXM9g" type="_WxFT8HwjEeWhpsphXt17Tg" association="_bV2wIHymEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_bV3XMHymEeWlkZrtOOXM9g" type="_WhMuUHymEeWlkZrtOOXM9g" association="_bV2wIHymEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_eQPdoHymEeWlkZrtOOXM9g" name="Evaluate Violation Reputation"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_kObTUHymEeWlkZrtOOXM9g" memberEnd="_kOb6YHymEeWlkZrtOOXM9g _kOb6YXymEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_kOb6YHymEeWlkZrtOOXM9g" type="_OYBAsHymEeWlkZrtOOXM9g" association="_kObTUHymEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_kOb6YXymEeWlkZrtOOXM9g" type="_eQPdoHymEeWlkZrtOOXM9g" association="_kObTUHymEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_shTvgHymEeWlkZrtOOXM9g" name="Evaluate User"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_uIfIsHymEeWlkZrtOOXM9g" memberEnd="_uIfvwHymEeWlkZrtOOXM9g _uIfvwXymEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_uIfvwHymEeWlkZrtOOXM9g" type="_OYBAsHymEeWlkZrtOOXM9g" association="_uIfIsHymEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_uIfvwXymEeWlkZrtOOXM9g" type="_shTvgHymEeWlkZrtOOXM9g" association="_uIfIsHymEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_3IeigHymEeWlkZrtOOXM9g" name="Update Violation">
+    <include xmi:id="_XNBdEHynEeWlkZrtOOXM9g" addition="_QLkT4HykEeWlkZrtOOXM9g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_-bW6QHymEeWlkZrtOOXM9g" memberEnd="_-bXhUHymEeWlkZrtOOXM9g _-bXhUXymEeWlkZrtOOXM9g">
+    <ownedEnd xmi:id="_-bXhUHymEeWlkZrtOOXM9g" type="_54dzUHylEeWlkZrtOOXM9g" association="_-bW6QHymEeWlkZrtOOXM9g"/>
+    <ownedEnd xmi:id="_-bXhUXymEeWlkZrtOOXM9g" type="_3IeigHymEeWlkZrtOOXM9g" association="_-bW6QHymEeWlkZrtOOXM9g"/>
+  </packagedElement>
+</uml:Model>
