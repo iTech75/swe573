@@ -8,3 +8,5 @@ Accessibility Control Platform (ACP) will be a social platform of which users wi
 
 After grading, the community will be able to access various reports of different viewpoints on these shares. If any authorized organization which is responsible for the region of the shared accessibility problem is registered then they will be informed.
 
+You view project plan [here](https://github.com/iTech75/swe573/wiki/Project-Plan)
+
