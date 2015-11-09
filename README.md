@@ -1,4 +1,9 @@
-# swe573
+# ACP - Accessibility Control Platform
+
+SWE573 Project - Fall 2015
+
+Wiki Page (https://github.com/iTech75/swe573/wiki)
+
 This repository is created for swe573 class HW1. 
 
 Requirements for hw1 are:
