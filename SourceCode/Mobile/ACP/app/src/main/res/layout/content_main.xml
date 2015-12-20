@@ -13,6 +13,7 @@
     tools:showIn="@layout/activity_main">
 
     <ScrollView
+        android:id="@+id/main_form"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
@@ -20,6 +21,18 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Title"
+                android:inputType="text"
+                android:lines="1" />
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -36,10 +49,17 @@
             </android.support.design.widget.TextInputLayout>
 
             <TextView
-                android:id="@+id/location"
+                android:id="@+id/latitude"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="41.0186,28.9647" />
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/longitude"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
 
             <ImageView
                 android:id="@+id/photo"

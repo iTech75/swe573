@@ -1,11 +1,16 @@
 package com.itech75.acp;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -14,6 +19,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -24,34 +30,39 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    EditText title;
     EditText description;
     ImageView imageView;
-    TextView location;
+    TextView latitude;
+    TextView longitude;
+    TextView username;
+    private View mProgressView;
+    private View mMainFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        description = (EditText) findViewById(R.id.description);
-
-        String uri = "@drawable/nature_h_c_250_500_8";
-        imageView = (ImageView)findViewById(R.id.photo);
-        //int id = getResources().getIdentifier("com.itech75.acp:drawable/nature_h_c_250_500_8.jpg", null, null);
-        int id = getResources().getIdentifier(uri, null, getPackageName());
-        Drawable res = getResources().getDrawable(id);
-        //imageView.setImageResource(id);
-        imageView.setImageDrawable(res);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -66,7 +77,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        location = (TextView)findViewById(R.id.location);
+        title = (EditText) findViewById(R.id.title);
+        description = (EditText) findViewById(R.id.description);
+        imageView = (ImageView)findViewById(R.id.photo);
+        latitude = (TextView)findViewById(R.id.latitude);
+        longitude = (TextView)findViewById(R.id.longitude);
+        username = (TextView)findViewById(R.id.username);
+        username.setText(getSharedPreferences(Constants.SHARED_PREFERENCES_NAME_FOR_USERINFO, MODE_PRIVATE).getString("username", "NO_USER"));
+        mMainFormView = findViewById(R.id.main_form);
+        mProgressView = findViewById(R.id.main_progress);
+
         buildGoogleApiClient();
     }
 
@@ -78,26 +98,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        mGoogleApiClient.connect();
     }
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
     public void takePhoto(View view) {
-        //Toast.makeText(getApplicationContext(), "Take photo please...", Toast.LENGTH_LONG).show();
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        if (takePictureIntent.resolveActivity(getPackageManager()) != null){
-//            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-//        }
         dispatchTakePictureIntent();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
-//            imageView.setImageBitmap(imageBitmap);
-//        }
         setPic();
     }
 
@@ -145,10 +154,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void setPic() {
         // Get the dimensions of the View
-        int targetW = 200;
-        imageView.getWidth();
-        int targetH = 400;
-        imageView.getHeight();
+        int targetW = 300;//imageView.getWidth();
+        int targetH = 400;//imageView.getHeight();
 
         mCurrentPhotoPath = PreferenceManager.getDefaultSharedPreferences(this).getString("mCurrentPhotoPath", "");
         // Get the dimensions of the bitmap
@@ -193,9 +200,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {
-            location.setText("");
-            location.append(String.valueOf(mLastLocation.getLatitude()));
-            location.append(String.valueOf(mLastLocation.getLongitude()));
+            latitude.setText(String.valueOf(mLastLocation.getLatitude()));
+            longitude.setText(String.valueOf(mLastLocation.getLongitude()));
         }
     }
 
@@ -210,6 +216,115 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void saveViolation(View view) {
+        try {
+            JSONObject requestParams = new JSONObject();
+            requestParams.put("title", title.getText());
+            requestParams.put("description", description.getText());
+            requestParams.put("latitude", latitude.getText());
+            requestParams.put("longitude", longitude.getText());
+            requestParams.put("userName", username.getText());
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] imageInByte = stream.toByteArray();
+            requestParams.put("imageBase64", Base64.encodeToString(imageInByte, Base64.DEFAULT));
+            StringEntity entity = new StringEntity(requestParams.toString());
+            invokeWS(entity);
+        }
+        catch (UnsupportedEncodingException unsupportedException){
 
+        }
+        catch (JSONException jsonexception){
+
+        }
+    }
+
+    public void invokeWS(StringEntity params){
+        // Show Progress Dialog
+        showProgress(true);
+        // Make RESTful webservice call using AsyncHttpClient object
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.post(this, Constants.SERVICE_VIOLATION, params, Constants.SERVICE_CONTENT_TYPE, new AsyncHttpResponseHandler() {
+        //client.post(this, "http://192.168.43.215:30188/api/violation", params, "application/json", new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                // Hide Progress Dialog
+                showProgress(false);
+                try {
+                    // JSON Object
+                    JSONObject obj = new JSONObject(new String(response));
+                    // When the JSON response has status boolean value assigned with true
+                    if (obj.getBoolean("result")) {
+                        Toast.makeText(getApplicationContext(), "Violation Saved!", Toast.LENGTH_LONG).show();
+                    }
+                    // Else display error message
+                    else {
+                        //errorMsg.setText(obj.getString("error_msg"));
+                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                  Throwable error) {
+                // Hide Progress Dialog
+                showProgress(false);
+                // When Http response code is '404'
+                if (statusCode == 404) {
+                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else {
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mMainFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mMainFormView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mMainFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mMainFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
     }
 }
