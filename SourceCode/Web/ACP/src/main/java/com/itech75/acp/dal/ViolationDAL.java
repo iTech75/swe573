@@ -1,4 +1,4 @@
-package com.itech75.acp.DAL;
+package com.itech75.acp.dal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import com.itech75.acp.Entities.Violation;
-import com.itech75.acp.Entities.ViolationData;
+import com.itech75.acp.entities.Violation;
+import com.itech75.acp.entities.ViolationData;
 
 public class ViolationDAL {
 	public static Violation getViolation(int id) throws SQLException {

@@ -1,4 +1,4 @@
-package com.itech75.acp.Entities;
+package com.itech75.acp.entities;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -6,8 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import com.itech75.acp.DAL.ViolationDataDAL;
-import com.itech75.acp.DAL.ViolationTypeDAL;
+import com.itech75.acp.dal.ViolationDataDAL;
+import com.itech75.acp.dal.ViolationTypeDAL;
 
 public class Violation implements Serializable{
 

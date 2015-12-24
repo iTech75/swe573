@@ -1,4 +1,4 @@
-package com.itech75.acp;
+package com.itech75.acp.controllers;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.itech75.acp.DAL.DbHelper;
-import com.itech75.acp.Entities.LoginRequest;
-import com.itech75.acp.Entities.LoginResponse;
+import com.itech75.acp.dal.DbHelper;
+import com.itech75.acp.entities.LoginRequest;
+import com.itech75.acp.entities.LoginResponse;
 
 @Controller
 public class LoginController {

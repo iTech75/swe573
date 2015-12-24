@@ -1,11 +1,11 @@
-package com.itech75.acp.DAL;
+package com.itech75.acp.dal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.itech75.acp.Entities.ViolationType;
+import com.itech75.acp.entities.ViolationType;
 
 public class ViolationTypeDAL {
 	public static ViolationType getViolationType(String id) throws SQLException{

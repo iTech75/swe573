@@ -1,4 +1,4 @@
-package com.itech75.acp.DAL;
+package com.itech75.acp.dal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itech75.acp.Entities.ViolationMeta;
+import com.itech75.acp.entities.ViolationMeta;
 
 public class ViolationMetaDAL {
 	public static List<ViolationMeta> getViolationMetaList(String id) {

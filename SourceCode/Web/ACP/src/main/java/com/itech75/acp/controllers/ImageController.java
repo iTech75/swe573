@@ -1,4 +1,4 @@
-package com.itech75.acp;
+package com.itech75.acp.controllers;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.itech75.acp.DAL.ViolationDAL;
+import com.itech75.acp.dal.ViolationDAL;
 
 @Controller
 @RequestMapping(value = "/image")

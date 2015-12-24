@@ -1,4 +1,4 @@
-package com.itech75.acp.Entities;
+package com.itech75.acp.entities;
 
 public class ViolationResult {
 	private boolean result;

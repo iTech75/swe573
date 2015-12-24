@@ -1,4 +1,4 @@
-package com.itech75.acp;
+package com.itech75.acp.controllers;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.itech75.acp.DAL.ViolationDAL;
-import com.itech75.acp.DAL.ViolationMetaDAL;
-import com.itech75.acp.Entities.Violation;
-import com.itech75.acp.Entities.ViolationData;
-import com.itech75.acp.Entities.ViolationMeta;
-import com.itech75.acp.Entities.ViolationResult;
+import com.itech75.acp.dal.ViolationDAL;
+import com.itech75.acp.dal.ViolationMetaDAL;
+import com.itech75.acp.entities.Violation;
+import com.itech75.acp.entities.ViolationData;
+import com.itech75.acp.entities.ViolationMeta;
+import com.itech75.acp.entities.ViolationResult;
 import com.itech75.acp.common.Units;
 import com.itech75.acp.common.WebHelper;
 

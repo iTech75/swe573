@@ -1,4 +1,4 @@
-package com.itech75.acp.DAL;
+package com.itech75.acp.dal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
