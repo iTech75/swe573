@@ -1,6 +1,6 @@
 package com.itech75.acp.Entities;
 
-import Common.Units;
+import com.itech75.acp.common.Units;
 
 public class ViolationMeta {
 	private int id;

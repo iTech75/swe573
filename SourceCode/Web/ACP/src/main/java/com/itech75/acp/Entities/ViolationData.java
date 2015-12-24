@@ -2,7 +2,7 @@ package com.itech75.acp.Entities;
 
 import java.io.Serializable;
 
-import Common.Units;
+import com.itech75.acp.common.Units;
 
 public class ViolationData implements Serializable{
 	/**

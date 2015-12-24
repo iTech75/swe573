@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=windows-1254" pageEncoding="windows-1254"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="t"%>
-<t:master pageTitle="Edit Violation">
+<t:master pageTitle="Edit Violation" addGoogleMap="true" enableGoogleMapLocationChange="true">
     <jsp:attribute name="scripts">
         <script lang="text/javascript">
             $(document).ready(
@@ -42,13 +42,28 @@
                 <div class="row">
                     <img class="img-responsive img-rounded" src="/acp/image/${violation.getId()}"></img>
                 </div>
-                <c:forEach items="${violation.getViolationData()}" var="item">
-                    <div class="row">
-                      ${item.getViolationMetaDescription()}:, ${item.getValue()} ${item.getUnit().toString()}                         
-                    </div>
-                </c:forEach>
+                <div class="row">
+                    &nbsp;
+                </div>
+                <div class="row">
+                    <table class="table table-responsive table-striped">
+                        <caption class="caption">Violation Items</caption>
+                        <tr>
+                            <th>Control Type</th>
+                            <th>Value</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        <c:forEach items="${violation.getViolationData()}" var="item">
+                        <tr>
+                            <td>${item.getViolationMetaDescription()}</td>
+                            <td>${item.getValue()} ${item.getUnit().toString()}</td>                         
+                            <td><a href="/acp/violation/removecontrol/${item.getId()}">remove</a></td>                         
+                        </tr>
+                        </c:forEach>
+                    </table>
+                </div>
             </div>
-            <div class="col-xs-6">
+            <div class="col-xs-6 col-xs-offset-1">
                 <div class='row'>
                     <div class="form-group">
                         <label for="violationTitle" class="control-label">Violation Title</label>
@@ -65,11 +80,19 @@
             
                 <div class='row'>
                     <div class="form-group">
+                        <label for="violationDescription" class="control-label">Violation Location</label>
+                        <div id="map-container" class="form-control"></div>
+                        <input class="form-control control" id="violationLocation" name="violationLocation" value="${violation.getLocation()}" disabled>
+                    </div>
+                </div>
+            
+                <div class='row'>
+                    <div class="form-group">
                         <label for="violationType" class="control-label">Violation Type</label>
                         <select class="form-control" id="violationType" name="violationType">
                             <option value="0">Please select main violation type</option>
-                            <option value="2">Pavement ramp</option>
-                            <option value="1">Other</option>
+                            <option value="2001">Pavement ramp</option>
+                            <option value="1001">Other</option>
                         </select>
                     </div>
                 </div>
@@ -142,7 +165,6 @@
                         <button class="btn btn-secondary">Cancel</button>
                     </div>
                 </div>
-                            
                 
             </div>
         </div>    

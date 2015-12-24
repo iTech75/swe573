@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itech75.acp.Entities.ViolationData;
-
-import Common.Units;
+import com.itech75.acp.common.Units;
 
 public class ViolationDataDAL {
 	public static List<ViolationData> getViolationDataList(int violationId) {
@@ -38,5 +37,17 @@ public class ViolationDataDAL {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static boolean delete(int id) throws SQLException{
+		DbHelper dbHelper = new DbHelper();
+		try(Connection connection = dbHelper.getConnection()){
+			String sql = "delete from acp.violation_data where id=?";
+			try(PreparedStatement statement = dbHelper.prepareStatement(connection, sql)){
+				statement.setInt(1, id);
+				int count = statement.executeUpdate();
+				return count == 1;
+			}
+		}
 	}
 }

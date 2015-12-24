@@ -1,5 +1,6 @@
 package com.itech75.acp;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,8 +20,8 @@ import com.itech75.acp.Entities.Violation;
 import com.itech75.acp.Entities.ViolationData;
 import com.itech75.acp.Entities.ViolationMeta;
 import com.itech75.acp.Entities.ViolationResult;
-
-import Common.Units;
+import com.itech75.acp.common.Units;
+import com.itech75.acp.common.WebHelper;
 
 @Controller
 @RequestMapping(value = "/violation")
@@ -36,7 +37,13 @@ public class ViolationController {
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)
 	public ModelAndView list(@PathVariable int id, HttpSession session) {
 		ModelAndView model = new ModelAndView("violation");
-		Violation violation = ViolationDAL.getViolation(id);
+		Violation violation = null;
+		try {
+			violation = ViolationDAL.getViolation(id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		session.setAttribute("violation", violation);		
 		model.addObject("violation", violation);
 		return model;
@@ -44,18 +51,17 @@ public class ViolationController {
 
 	@RequestMapping(value = "edit", method = RequestMethod.GET)
 	public ModelAndView edit(HttpServletRequest request, HttpSession session) {
-		/*
-		 * Get violation from session
-		 */
 		Violation violation = (Violation) session.getAttribute("violation");
-		
-		int violationType = violation.getType();
-		ModelAndView model = new ModelAndView("editviolation");
-
-		model.addObject("violation", violation);
-		model.addObject("violationType", violationType);
-		model.addObject("selectedControlType", 0);
-		return model;
+		if(violation != null){
+			String violationType = violation.getType();
+			ModelAndView model = new ModelAndView("editviolation");
+	
+			model.addObject("violation", violation);
+			model.addObject("violationType", violationType);
+			model.addObject("selectedControlType", 0);
+			return model;
+		}
+		return new ModelAndView("home");
 	}
 	
 	@RequestMapping(value = "save", method = RequestMethod.POST)
@@ -64,6 +70,9 @@ public class ViolationController {
 		 * Get violation from session
 		 */
 		Violation violation = (Violation) session.getAttribute("violation");
+		if(violation == null){
+			return new ModelAndView("home");
+		}
 		
 		String violationType = request.getParameter("violationType");
 		String selectedControlType = request.getParameter("controlType");
@@ -79,7 +88,7 @@ public class ViolationController {
 		}
 
 		if (violationType!=null && !violationType.isEmpty()) {
-			int id = Integer.parseInt(violationType);
+			String id = violationType;
 			int controlTypeId = 0;
 			if(selectedControlType != null && selectedControlType.trim() != ""){
 				controlTypeId = Integer.parseInt(selectedControlType);
@@ -106,6 +115,7 @@ public class ViolationController {
 			model.addObject("violationMetaList", metaList);
 			model.addObject("selectedControlType", selectedControlType);
 			model.addObject("selectedMetaDescription", selectedMetaDescription);
+			WebHelper.showSuccess(model, "Violation saved...");
 		}
 		
 		return model;
@@ -131,105 +141,44 @@ public class ViolationController {
 		
 		return new ViolationData(0, 0, controlId, value, unit);
 	}
-	
-//	private String createControls(HttpServletRequest request) {
-//		String violationType = request.getParameter("violationType");
-//		int id = Integer.parseInt(violationType);
-//		
-//		StringBuilder builder = new StringBuilder();
-//		List<ViolationMeta> list = ViolationMetaDAL.getViolationMetaList(id);
-//		updateFromRequest(list, request);
-//		for (ViolationMeta item : list) {
-//			builder.append("<div class='row form-inline col-md-offset-1'>");
-//			createControlFor(builder, item);
-//			builder.append("</div>");
-//		}
-//		return builder.toString();
-//	}
-//
-//	private List<ViolationData> updateFromRequest(List<ViolationMeta> list, HttpServletRequest request) {
-//		List<ViolationData> result = new ArrayList<ViolationData>();
-//		
-//		for (ViolationMeta meta : list) {
-//			String input_id = meta.getDescription().toLowerCase().replace(' ', '_');
-//			String unitBoxName = input_id + "_ub";
-//			
-//			String value = request.getParameter(input_id);
-//			if(value != null){
-//				value = value.trim().toLowerCase();
-//				String unit = request.getParameter(unitBoxName);
-//				Units unitEnum = Units.MM;
-//				if(unit != null){
-//					unitEnum = Units.valueOf(unit);
-//				}
-//				//ViolationData data = new ViolationData();
-//			}
-//		}
-//		
-//		return result;
-//	}
-//
-//	private void createControlFor(StringBuilder builder, ViolationMeta item) {
-//		String input_id = item.getDescription().toLowerCase().replace(' ', '_');
-//
-//		switch (item.getType()) {
-//		case 0: {
-//			builder.append("<div class='input-group col-md-3'>");
-//			builder.append(String.format("<label for='%s' class='control-label'>%s</label>", input_id, item.getDescription()));
-//			builder.append(String.format("<input type='text' class='form-control' id='%s' name='%s'>", input_id, input_id));
-//			builder.append("</div>");
-//			createUnitSelectBox(builder, item, input_id);
-//			createExpectedValue(builder, item, input_id);
-//			break;
-//		}
-//		case 1: {
-//			builder.append("<div class='checkbox col-md-3'>");
-//			builder.append(String.format("<label for='%s'>", input_id));
-//			builder.append(String.format("<input type='checkbox' id='%s' name='%s'>", input_id, input_id));
-//			builder.append(String.format("%s</label>", item.getDescription()));
-//			builder.append("</div>");
-//			createUnitSelectBox(builder, item, input_id);
-//			createExpectedValue(builder, item, input_id);
-//			break;
-//		}
-//		}
-//	}
-//
-//	private void createUnitSelectBox(StringBuilder builder, ViolationMeta item, String input_id) {
-//		String unitBoxName = input_id + "_ub";
-//		builder.append("<div class='input-group col-md-2 col-md-offset-1'>");
-//		builder.append(String.format("<label for='%s' class='control-label'>Unit</label>", unitBoxName));
-//		builder.append(String.format("<select class='form-control' id='%s' name='%s'>", unitBoxName, unitBoxName));
-//		builder.append("<optgroup label='length'>");
-//		builder.append("<option>mm</option>");
-//		builder.append("<option>cm</option>");
-//		builder.append("<option>m</option>");
-//		builder.append("</optgroup>");
-//		builder.append("<optgroup label='slope'>");
-//		builder.append("<option>degree</option>");
-//		builder.append("</optgroup>");
-//		builder.append("<optgroup label='boolean'>");
-//		builder.append("<option>TrueFalse</option>");
-//		builder.append("</optgroup>");
-//		builder.append("</select>");
-//		builder.append("</div>");
-//	}
-//
-//	private void createExpectedValue(StringBuilder builder, ViolationMeta item, String input_id) {
-//		String expectValueName = input_id + "_ev";
-//		
-//		builder.append("<div class='input-group col-md-3 col-md-offset-1'>");
-//		builder.append(String.format("<label for='%s' class='control-label'>", expectValueName));
-//		builder.append("Expected value");
-//		builder.append("</label>");
-//		builder.append(String.format("<p class='form-control' id='%s'>%s</p>", expectValueName, item.getExpectedValue()));
-//		builder.append("</div>");
-//	}
-
 
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody ViolationResult post(@RequestBody final Violation violation) {
 		return new ViolationResult(ViolationDAL.createViolation(violation), "");
 	}
 
+	@RequestMapping(value="removecontrol/{controlid}", method = RequestMethod.GET)
+	public ModelAndView removeControl(@PathVariable int controlid, HttpServletRequest request, HttpSession session) {
+		/*
+		 * Get violation from session
+		 */
+		Violation violation = (Violation) session.getAttribute("violation");
+		
+		String violationType = request.getParameter("violationType");
+		String selectedControlType = request.getParameter("controlType");
+		ModelAndView model = new ModelAndView("editviolation");
+		if (violationType!=null && !violationType.isEmpty()) {
+			String id = violationType;
+			int controlTypeId = 0;
+			if(selectedControlType != null && selectedControlType.trim() != ""){
+				controlTypeId = Integer.parseInt(selectedControlType);
+			}
+
+			String selectedMetaDescription = "";
+			List<ViolationMeta> metaList = ViolationMetaDAL.getViolationMetaList(id);
+			for (ViolationMeta meta : metaList) {
+				if(meta.getId() == controlTypeId){
+					selectedMetaDescription = meta.getDescription();
+				}
+			}
+			
+			model.addObject("violation", violation);
+			model.addObject("violationType", violationType);
+			model.addObject("violationMetaList", metaList);
+			model.addObject("selectedControlType", selectedControlType);
+			model.addObject("selectedMetaDescription", selectedMetaDescription);
+		}
+		
+		return model;
+	}
 }

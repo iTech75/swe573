@@ -10,7 +10,7 @@ import java.util.List;
 import com.itech75.acp.Entities.ViolationMeta;
 
 public class ViolationMetaDAL {
-	public static List<ViolationMeta> getViolationMetaList(int id) {
+	public static List<ViolationMeta> getViolationMetaList(String id) {
 		List<ViolationMeta> result = new ArrayList<ViolationMeta>();
 		try {
 			ViolationMeta violationMeta = null;
@@ -18,7 +18,7 @@ public class ViolationMetaDAL {
 			Connection connection = dbHelper.getConnection();
 			String sql = "select * from acp.violation_meta where vtype_id=?";
 			PreparedStatement statement = dbHelper.prepareStatement(connection, sql);
-			statement.setInt(1, id);
+			statement.setString(1, id);
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				violationMeta = new ViolationMeta(resultSet.getInt("id"), resultSet.getInt("vtype_id"),
