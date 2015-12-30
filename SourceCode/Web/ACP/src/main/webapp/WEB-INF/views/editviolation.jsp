@@ -8,7 +8,6 @@
                     function() {
                         $('#violationType').on('change',function() {
                             $('#violationForm').submit();
-
                         });
                         $('#controlType').on('change',function() {
                             $('#violationForm').submit();
@@ -23,7 +22,26 @@
                         if (vControl) {
                             $('#controlType').val(vControl);
                         }
-                    }
+                        
+                        var json = $.getJSON("/acp/violation/types")
+                        .done(function(data){
+                            $("#violationType").empty();
+                            $.each(data, function(key, value){
+                                $("#violationType").append("<option value='" + value.id + "'>" + value.description + "</option>");
+                            });
+                            $("#violationType").val(vType);
+                            
+                            var json2 = $.getJSON("/acp/violation/metas/" + $("#violationType").val())
+                            .done(function(data) {
+                                $("#controlType").empty();
+                                $.each(data, function(key, value){
+                                    $("#controlType").append("<option value='" + value.id + "'>" + value.description + "</option>");
+                                });
+                                $("#controlType").val(vControl);
+                                
+                            })
+                        });
+                    }                    
             );
     
             function getParameterByName(name) {
@@ -62,37 +80,12 @@
                         </c:forEach>
                     </table>
                 </div>
-            </div>
-            <div class="col-xs-6 col-xs-offset-1">
-                <div class='row'>
-                    <div class="form-group">
-                        <label for="violationTitle" class="control-label">Violation Title</label>
-                        <input class="form-control" type="text" id="violationTitle" name="violationTitle" value="${violation.getTitle() }">
-                    </div>
-                </div>
-            
-                <div class='row'>
-                    <div class="form-group">
-                        <label for="violationDescription" class="control-label">Violation Description</label>
-                        <textarea class="form-control" rows="6" id="violationDescription" name="violationDescription">${violation.getDescription()}</textarea>
-                    </div>
-                </div>
-            
-                <div class='row'>
-                    <div class="form-group">
-                        <label for="violationDescription" class="control-label">Violation Location</label>
-                        <div id="map-container" class="form-control"></div>
-                        <input class="form-control control" id="violationLocation" name="violationLocation" value="${violation.getLocation()}" disabled>
-                    </div>
-                </div>
-            
+                
                 <div class='row'>
                     <div class="form-group">
                         <label for="violationType" class="control-label">Violation Type</label>
                         <select class="form-control" id="violationType" name="violationType">
-                            <option value="0">Please select main violation type</option>
-                            <option value="2001">Pavement ramp</option>
-                            <option value="1001">Other</option>
+                            <option value="0">Please wait...loading</option>
                         </select>
                     </div>
                 </div>
@@ -101,10 +94,7 @@
                     <div class="form-group">
                         <label for="controlType" class="control-label">Control Type</label> 
                         <select class="form-control" id="controlType" name="controlType">
-                            <option value="0">Please select control type</option>
-                            <c:forEach var="item" items="${violationMetaList}"> 
-                                <option value="${item.getId()}" ${item.getId() == selectedControlType ? 'selected':'' }>${item.getDescription()}</option>
-                            </c:forEach>
+                            <option value="0">Please select violation type first</option>
                         </select>
                         <input type="hidden" id="metaDescription" name="metaDescription" value="${selectedMetaDescription}">
                     </div>
@@ -157,6 +147,30 @@
                             
                         </div>
                     </div>    
+                </div>
+                
+            </div>
+            <div class="col-xs-6 col-xs-offset-1">
+                <div class='row'>
+                    <div class="form-group">
+                        <label for="violationTitle" class="control-label">Violation Title</label>
+                        <input class="form-control" type="text" id="violationTitle" name="violationTitle" value="${violation.getTitle() }">
+                    </div>
+                </div>
+            
+                <div class='row'>
+                    <div class="form-group">
+                        <label for="violationDescription" class="control-label">Violation Description</label>
+                        <textarea class="form-control" rows="6" id="violationDescription" name="violationDescription">${violation.getDescription()}</textarea>
+                    </div>
+                </div>
+            
+                <div class='row'>
+                    <div class="form-group">
+                        <label for="violationlocation" class="control-label">Violation Location</label>
+                        <div id="map-container" class="form-control"></div>
+                        <input class="form-control control" id="violationLocation" name="violationLocation" value="${violation.getLocation()}" disabled>
+                    </div>
                 </div>
 
                 <div class="row">
