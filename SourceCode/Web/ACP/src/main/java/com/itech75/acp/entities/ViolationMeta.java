@@ -81,4 +81,13 @@ public class ViolationMeta {
 		this.expectedValueUnit = Units.valueOf(expectedValueUnit);
 		this.selection = selection;
 	}
+	
+	public ViolationMeta(int id, String description) {
+		this.id = id;
+		this.description = description;
+	}
+	
+	public static ViolationMeta CreateDefaultSelectItem(){
+		return new ViolationMeta(0, "Please select");
+	}
 }

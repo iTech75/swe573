@@ -21,4 +21,9 @@ public class ViolationType {
 	public ViolationType(){
 		
 	}
+	public ViolationType(String id, String description) {
+		super();
+		this.id = id;
+		this.description = description;
+	}
 }

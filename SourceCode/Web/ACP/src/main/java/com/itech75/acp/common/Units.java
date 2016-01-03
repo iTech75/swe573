@@ -20,5 +20,5 @@ public enum Units {
 	/*
 	 * 4
 	 */
-	TRUEFALSE
+	BOOLEAN
 }

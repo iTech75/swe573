@@ -1,13 +1,11 @@
 package com.itech75.acp.entities;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import com.itech75.acp.dal.ViolationDataDAL;
-import com.itech75.acp.dal.ViolationTypeDAL;
 
 public class Violation implements Serializable{
 
@@ -16,7 +14,6 @@ public class Violation implements Serializable{
 	 */
 	private static final long serialVersionUID = -7358924605063025991L;
 	private int id;
-	private String type;
 	private String title;
 	private String description;
 	private byte[] image;
@@ -32,13 +29,6 @@ public class Violation implements Serializable{
 	}
 	public void setId(int id) {
 		this.id = id;
-	}
-	
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
 	}
 	
 	public String getTitle() {
@@ -113,23 +103,19 @@ public class Violation implements Serializable{
 		return violationData;
 	}
 	
-	private ViolationType violationType;
-	public ViolationType getViolationType() throws SQLException{
-		if(violationType == null){
-			violationType = ViolationTypeDAL.getViolationType(type);
-		}
-		return violationType;
+	public boolean removeViolationData(int id){
+		List<ViolationData> input = getViolationData();
+		return input.removeIf(p -> p.getId() == id);
 	}
 	
 	public Violation(){
 
 	}
 	
-	public Violation(int id, String type, String title, String description, byte[] image, Date timestamp, 
+	public Violation(int id, String title, String description, byte[] image, Date timestamp, 
 			double latitude, double longitude, int userId) {
 		super();
 		this.id = id;
-		this.type = type;
 		this.title = title;
 		this.description = description;
 		this.image = image;

@@ -1,9 +1,10 @@
 package com.itech75.acp.controllers;
 
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.itech75.acp.dal.ViolationDAL;
+import com.itech75.acp.dal.ViolationDataDAL;
 import com.itech75.acp.dal.ViolationMetaDAL;
 import com.itech75.acp.dal.ViolationTypeDAL;
 import com.itech75.acp.entities.Violation;
@@ -22,6 +24,8 @@ import com.itech75.acp.entities.ViolationData;
 import com.itech75.acp.entities.ViolationMeta;
 import com.itech75.acp.entities.ViolationResult;
 import com.itech75.acp.entities.ViolationType;
+import com.itech75.acp.common.ResultBase;
+import com.itech75.acp.common.ReturnStatusCodes;
 import com.itech75.acp.common.Units;
 import com.itech75.acp.common.WebHelper;
 
@@ -45,36 +49,34 @@ public class ViolationController {
 	@RequestMapping(value="/types", method=RequestMethod.GET)
 	public @ResponseBody List<ViolationType> types()
 	{
-		try {
-			return ViolationTypeDAL.getViolationTypes();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+		List<ViolationType> result = ViolationTypeDAL.getViolationTypes();
+		result.add(0, new ViolationType("0", "Please select a type"));
+		return result;
 	}
 	
 	@RequestMapping(value="/metas/{id}", method=RequestMethod.GET)
 	public @ResponseBody List<ViolationMeta> metas(@PathVariable String id)
 	{
-		return ViolationMetaDAL.getViolationMetaList(id);
+		List<ViolationMeta> result = ViolationMetaDAL.getViolationMetaList(id);
+		result.add(0, ViolationMeta.CreateDefaultSelectItem());
+		return result;
+	}
+	
+	@RequestMapping(value="/meta/{id}", method=RequestMethod.GET)
+	public @ResponseBody ViolationMeta getMeta(@PathVariable int id)
+	{
+		return ViolationMetaDAL.getViolationMeta(id);
 	}
 	
 	/*
 	 * View a selected violation by the user, path variable 'id' defines the violation to be loaded.
 	 */
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)	
-	public ModelAndView viewViolation(@PathVariable int id, HttpSession session) {
+	public ModelAndView viewViolation(@PathVariable int id, HttpSession session) throws Exception {
 		ModelAndView model = new ModelAndView("violation");
 		Violation violation = null;
-		try {
-			violation = ViolationDAL.getViolation(id);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		session.setAttribute("violation", violation);		
-		model.addObject("violation", violation);
+		violation = ViolationDAL.getViolation(id);
+		session.setAttribute("violation", violation);
 		return model;
 	}
 
@@ -84,13 +86,9 @@ public class ViolationController {
 	@RequestMapping(value = "edit", method = RequestMethod.GET)
 	public ModelAndView edit(HttpServletRequest request, HttpSession session) {
 		Violation violation = (Violation) session.getAttribute("violation");
+		ModelAndView model = new ModelAndView("editviolation");
 		if(violation != null){
-			String violationType = violation.getType();
-			ModelAndView model = new ModelAndView("editviolation");
-	
-			model.addObject("violation", violation);
-			model.addObject("violationType", violationType);
-			model.addObject("selectedControlType", 0);
+			addControlVariablesToView(model, "0", "0");
 			return model;
 		}
 		return new ModelAndView("home");
@@ -102,7 +100,7 @@ public class ViolationController {
 	 * button on the form.
 	 */
 	@RequestMapping(value = "save", method = RequestMethod.POST)
-	public ModelAndView save(HttpServletRequest request, HttpSession session) {
+	public ModelAndView save(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		Violation violation = (Violation) session.getAttribute("violation");
 		if(violation == null){
 			return new ModelAndView("home");
@@ -110,65 +108,105 @@ public class ViolationController {
 		
 		String violationType = request.getParameter("violationType");
 		String selectedControlType = request.getParameter("controlType");
-		String addControl = request.getParameter("addControl");
-		String saveViolation = request.getParameter("saveViolation");
-		String metaDescription = request.getParameter("metaDescription");
-		ModelAndView model = new ModelAndView("editviolation");
+		String operation = request.getParameter("operation");
+		ModelAndView model = null;
 		
-		if(addControl != null && addControl.equals("1")){
-			ViolationData data = createDataFromRequest(request);
-			data.setViolationMetaDescription(metaDescription);
-			violation.getViolationData().add(data);
-		}
+		if(operation != null){
+			switch (operation) {
+			
+			case "add":
+				model = addOperationForSave(request, violation, violationType, selectedControlType);
+				break;
+				
+			case "save":
+				model = saveOperationForSave(request, violation);
+				break;
+				
+			case "cancel":
+				cancelOperationForSave(request, response, violation);
+				break;
 
-		if (violationType!=null && !violationType.isEmpty()) {
-			String id = violationType;
-			int controlTypeId = 0;
-			if(selectedControlType != null && selectedControlType.trim() != ""){
-				controlTypeId = Integer.parseInt(selectedControlType);
+			default:
+				break;
 			}
-			
-			String selectedMetaDescription = "";
-			List<ViolationMeta> metaList = ViolationMetaDAL.getViolationMetaList(id);
-			for (ViolationMeta meta : metaList) {
-				if(meta.getId() == controlTypeId){
-					selectedMetaDescription = meta.getDescription();
-				}
-			}
-			
-			violation.setDescription(request.getParameter("violationDescription"));
-			violation.setTitle(request.getParameter("violationTitle"));
-			violation.setType(id);
-			
-			if(saveViolation != null && saveViolation.equals("1")){
-				ViolationDAL.save(violation);
-			}
-
-			model.addObject("violation", violation);
-			model.addObject("violationType", violationType);
-			model.addObject("violationMetaList", metaList);
-			model.addObject("selectedControlType", selectedControlType);
-			model.addObject("selectedMetaDescription", selectedMetaDescription);
-			WebHelper.showSuccess(model, "Violation saved...");
 		}
+		return model;
+	}
+
+	private ModelAndView addOperationForSave(HttpServletRequest request, Violation violation, String violationType,
+			String selectedControlType) {
+		ModelAndView model;
+		model = new ModelAndView("editviolation");
+		addControlVariablesToView(model, violationType, selectedControlType);
 		
+		ResultBase<ViolationData> result = createDataFromRequest(request);
+		if(result.getStatusCode() == ReturnStatusCodes.SUCCESS){
+			ViolationDataDAL.readDescriptionsForIdFields(result.getResult());			
+			violation.getViolationData().add(result.getResult());
+			WebHelper.showMessage(model, result.getMessage());
+		}
+		else{
+			WebHelper.showError(model, result.getMessage());
+		}
 		return model;
 	}
 	
+	private ModelAndView saveOperationForSave(HttpServletRequest request, Violation violation) {
+		ModelAndView model;
+		model = new ModelAndView("violation");
+		
+		violation.setDescription(request.getParameter("violationDescription"));
+		violation.setTitle(request.getParameter("violationTitle"));
+		String violationLocation = request.getParameter("violationLocation");
+		String[] latLon = violationLocation.split(",");
+		violation.setLatitude(Double.parseDouble(latLon[0]));
+		violation.setLongitude(Double.parseDouble(latLon[1]));
+
+		ViolationDAL.save(violation);
+		WebHelper.showSuccess(model, "Violation saved...");
+		return model;
+	}
+
+	private void cancelOperationForSave(HttpServletRequest request, HttpServletResponse response, Violation violation) {
+		try {
+			String url = String.format("%s/violation/%d", request.getContextPath(), violation.getId());
+			response.sendRedirect(url);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/*
 	 * 
 	 */
-	private ViolationData createDataFromRequest(HttpServletRequest request) {
+	private ResultBase<ViolationData> createDataFromRequest(HttpServletRequest request) {
 		String buffer;
-		int controlId = 0;
+		int metaId = 0;
 		Units unit = Units.MM;
 		
-		buffer = request.getParameter("controlType");
-		if(buffer != null){
-			controlId = Integer.parseInt(buffer);
+		if(request.getParameterMap().containsKey("controlType")){
+			metaId = Integer.parseInt(request.getParameter("controlType"));
+		}
+		else{
+			return ResultBase.sendError("There is an unexpected state in the request, please try again!");
 		}
 		
-		String value = request.getParameter("newControlValue");
+		ViolationMeta violationMeta = ViolationMetaDAL.getViolationMeta(metaId);
+		String value = null;
+		switch (violationMeta.getType()) {
+		case 1:
+			value = request.getParameter("newControlValueCheckbox");
+			value = (value != null && value.toLowerCase().equals("on")) ? "Exists" : "None";
+			break;
+		default:
+			value = request.getParameter("newControlValue");
+			break;
+		}
+		
+		if(value.equals(violationMeta.getExpectedValue())){
+			return ResultBase.sendError("There is no violation, check your numbers, please!");
+		}
 		
 		buffer = request.getParameter("newUnit");
 		if(buffer != null){
@@ -176,7 +214,7 @@ public class ViolationController {
 			unit = Units.valueOf(buffer);
 		}
 		
-		return new ViolationData(0, 0, controlId, value, unit);
+		return ResultBase.sendSuccess(new ViolationData(0, 0, metaId, value, unit), "New control added to the violation");
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -186,36 +224,25 @@ public class ViolationController {
 
 	@RequestMapping(value="removecontrol/{controlid}", method = RequestMethod.GET)
 	public ModelAndView removeControl(@PathVariable int controlid, HttpServletRequest request, HttpSession session) {
-		/*
-		 * Get violation from session
-		 */
 		Violation violation = (Violation) session.getAttribute("violation");
-		
-		String violationType = request.getParameter("violationType");
-		String selectedControlType = request.getParameter("controlType");
 		ModelAndView model = new ModelAndView("editviolation");
-		if (violationType!=null && !violationType.isEmpty()) {
-			String id = violationType;
-			int controlTypeId = 0;
-			if(selectedControlType != null && selectedControlType.trim() != ""){
-				controlTypeId = Integer.parseInt(selectedControlType);
-			}
-
-			String selectedMetaDescription = "";
-			List<ViolationMeta> metaList = ViolationMetaDAL.getViolationMetaList(id);
-			for (ViolationMeta meta : metaList) {
-				if(meta.getId() == controlTypeId){
-					selectedMetaDescription = meta.getDescription();
-				}
-			}
-			
-			model.addObject("violation", violation);
-			model.addObject("violationType", violationType);
-			model.addObject("violationMetaList", metaList);
-			model.addObject("selectedControlType", selectedControlType);
-			model.addObject("selectedMetaDescription", selectedMetaDescription);
+		
+		boolean result = violation.removeViolationData(controlid);
+		if(result){
+			WebHelper.showSuccess(model, "Control is removed from the violation, click save to persist change!");
 		}
+		else{
+			WebHelper.showError(model, "Could not remove the item, please try again!");
+		}
+		model.addObject("violation", violation);
+		
+		addControlVariablesToView(model, "0", "0");
 		
 		return model;
+	}
+
+	private void addControlVariablesToView(ModelAndView model, String violationType, String selectedControlType) {
+		model.addObject("violationType", (violationType != null && !violationType.equals("")) ? violationType : "0");
+		model.addObject("selectedControlType", (selectedControlType != null && !selectedControlType.equals("")) ? selectedControlType : "0");
 	}
 }

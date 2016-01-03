@@ -1,8 +1,6 @@
 package com.itech75.acp.controllers;
 
 import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
@@ -20,12 +18,7 @@ public class ImageController {
 	public void show(@PathVariable int id, HttpServletResponse response){
 		byte[] image = null;
 		
-		try {
-			image = ViolationDAL.getViolationImage(id);
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} 
+		image = ViolationDAL.getViolationImage(id); 
 		
 	    response.setContentType("image/jpeg, image/jpg, image/png, image/gif");
 	    try {

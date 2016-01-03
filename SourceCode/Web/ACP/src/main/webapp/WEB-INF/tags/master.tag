@@ -13,12 +13,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1254">
 <title>${pageTitle}</title>
 <link href="/acp/webjars/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<link href="/acp/resources/css/bootstrap-toggle.css" rel="stylesheet">
 <style type="text/css">
     #message {
         position: fixed;
-        top: 20%;
-        left: 20%;
+        top: 90%;
+        left: 40%;
         width: 60%;
+        height: 10%;
         z-index: 1000;
     }
     #inner-message {
@@ -28,13 +30,11 @@
 </head>
 <body style="padding-top: 90px">
     <c:if test="${message != null && !message.trim().equals('')}">
-        <div id="message">
-        <div style="padding: 5px;">
+        <div id="message" style="padding: 5px;" class="fade">
           <div id="inner-message" class="alert alert-${messageType} text-center">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             <strong class="pull-left">[${messageType.toUpperCase()}]</strong>${ message }          
           </div>
-        </div>
         </div>
     </c:if>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -63,10 +63,22 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="/acp/webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="/acp/resources/js/bootstrap-toggle.js"></script>
+    <script type="text/javascript">
+    $(document).ready (function(){
+        $("#message").hide();
+        $("#message").alert();
+        $("#message").fadeTo(2000, 500).slideUp(500, function(){
+           $("#success-alert").alert('close');
+        });   
+    });
+    </script>
     <c:if test="${addGoogleMap == true}">
         <style>
             #map-container {
-               height: 300px
+                display: block;
+                width: 100%;
+               height: 300px;
             }
         </style>
 

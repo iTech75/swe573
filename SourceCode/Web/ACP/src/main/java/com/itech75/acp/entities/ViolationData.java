@@ -13,6 +13,7 @@ public class ViolationData implements Serializable{
 	private int violationId;
 	private int violationMetaId;
 	private String violationMetaDescription;
+	private String violationMetaTypeDescription;
 	private String value;
 	private Units unit;
 	
@@ -62,6 +63,13 @@ public class ViolationData implements Serializable{
 		this.violationMetaDescription = violationMetaDescription;
 	}
 
+	public String getViolationMetaTypeDescription() {
+		return violationMetaTypeDescription;
+	}
+	public void setViolationMetaTypeDescription(String violationMetaTypeDescription) {
+		this.violationMetaTypeDescription = violationMetaTypeDescription;
+	}
+	
 	public ViolationData(int id, int violationId, int violationMetaId, String value, Units unit) {
 		super();
 		this.id = id;

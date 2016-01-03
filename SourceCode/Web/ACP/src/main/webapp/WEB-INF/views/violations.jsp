@@ -8,11 +8,11 @@
     
     <c:forEach items="${violations}" var="violation">
         <div class="row">
-            <div class="col-xs-3"><img class="img-responsive img-rounded" src="/acp/image/${violation.getId()}"></img></div>
-            <div class="col-xs-9">
-                <div class="row"><div class="col-xs-1">${violation.getId()}</div></div>
-                <div class="row"><div class="col-xs-4"><a href="/acp/violation/${violation.getId()}">${violation.getTitle()}</a></div></div>
-                <div class="row"><div class="col-xs-7">${violation.getDescription()}</div></div>
+            <div class="col-md-3"><img class="img-responsive img-rounded" src="/acp/image/${violation.getId()}"></img></div>
+            <div class="col-md-9">
+                <div class="row"><div class="col-md-1">${violation.getId()}</div></div>
+                <div class="row"><div class="col-md-4"><a href="/acp/violation/${violation.getId()}">${violation.getTitle()}</a></div></div>
+                <div class="row"><div class="col-md-7">${violation.getDescription()}</div></div>
             </div>
         </div>
         <hr>

@@ -14,7 +14,10 @@ import com.itech75.acp.entities.ViolationType;
  * loads a selected ViolationType from database. id defines the record to be loaded.
  */
 public class ViolationTypeDAL {
-	public static ViolationType getViolationType(String id) throws SQLException{
+	/*
+	 * Loads user selected (by id parameter) ViolationType from db and returns
+	 */
+	public static ViolationType getViolationType(String id){
 		String sql = "select id, description from acp.violation_types where id=?";
 		DbHelper dbHelper = new DbHelper();
 			
@@ -26,9 +29,14 @@ public class ViolationTypeDAL {
 						ViolationType result = new ViolationType();
 						result.setId(resultSet.getString("id"));
 						result.setDescription(resultSet.getString("description"));
+						return result;
 					}
 				}
 			}
+		}
+		catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -36,7 +44,7 @@ public class ViolationTypeDAL {
 	/*
 	 * Load all Violation types from database.
 	 */
-	public static List<ViolationType> getViolationTypes() throws SQLException{
+	public static List<ViolationType> getViolationTypes(){
 		String sql = "select id, description from acp.violation_types";
 		DbHelper dbHelper = new DbHelper();
 		List<ViolationType> result = new ArrayList<ViolationType>();
@@ -50,9 +58,12 @@ public class ViolationTypeDAL {
 						violationType.setDescription(resultSet.getString("description"));
 						result.add(violationType);
 					}
-					return result;
 				}
 			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return result;
 	}
 }

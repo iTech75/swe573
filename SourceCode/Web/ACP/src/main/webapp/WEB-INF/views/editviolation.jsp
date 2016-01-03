@@ -4,59 +4,139 @@
 <t:master pageTitle="Edit Violation" addGoogleMap="true" enableGoogleMapLocationChange="true">
     <jsp:attribute name="scripts">
         <script lang="text/javascript">
-            $(document).ready(
-                    function() {
-                        $('#violationType').on('change',function() {
-                            $('#violationForm').submit();
-                        });
-                        $('#controlType').on('change',function() {
-                            $('#violationForm').submit();
-                            
-                        });
-                    
-                        var vType = ${violationType};
-                        if (vType) {
-                            $('#violationType').val(vType);
-                        }
-                        var vControl = ${selectedControlType};
-                        if (vControl) {
-                            $('#controlType').val(vControl);
-                        }
+        var violationType = ${violationType};
+        var selectedControlType = ${selectedControlType}; 
+
+        $(document).ready(
+            function() {
+                $('#addNewControlButtonRow').removeClass('hidden'); 
+                $('#violationTypeRow').addClass('hidden'); 
+                $('#controlTypeRow').addClass('hidden'); 
+                $('#newControlEntryPanel').addClass('hidden');
+                $("[id='newControlValueCheckbox']").bootstrapToggle({
+                     on: 'Exists', 
+                     off: 'None',
+                     onstyle: 'danger',
+                     offstyle: 'success',
+                     width: 100
+                });
+
+                $('#addNewControlButton').on('click', function(){
+                    try{
+                        loadViolationTypes(0);
                         
-                        var json = $.getJSON("/acp/violation/types")
-                        .done(function(data){
-                            $("#violationType").empty();
-                            $.each(data, function(key, value){
-                                $("#violationType").append("<option value='" + value.id + "'>" + value.description + "</option>");
-                            });
-                            $("#violationType").val(vType);
-                            
-                            var json2 = $.getJSON("/acp/violation/metas/" + $("#violationType").val())
-                            .done(function(data) {
-                                $("#controlType").empty();
-                                $.each(data, function(key, value){
-                                    $("#controlType").append("<option value='" + value.id + "'>" + value.description + "</option>");
-                                });
-                                $("#controlType").val(vControl);
-                                
-                            })
-                        });
-                    }                    
-            );
-    
-            function getParameterByName(name) {
-                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"); 
-                var results = regex.exec(location.search);
-                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+                        $('#violationTypeRow').removeClass('hidden'); 
+                        $('#addNewControlButtonRow').addClass('hidden');
+                        scrollToView($('#violationType'));
+                    }
+                    finally{
+                        return false;
+                    }
+                });
+                
+                $('#violationType').on('change',function() {
+                    $('#controlType').empty();
+                    if($('#violationType').val() != '0'){
+                        loadControlTypesFor($('#violationType').val(), 0);
+                        $('#controlTypeRow').removeClass('hidden'); 
+                        scrollToView($('#controlType'));
+                    }
+                    else{
+                        $('#controlTypeRow').addClass('hidden'); 
+                        $('#newControlEntryPanel').addClass('hidden');
+                    }
+                });
+                
+                $('#controlType').on('change',function() {
+                    if($('#controlType').val() == '0'){
+                        $('#newControlEntryPanel').addClass('hidden');
+                    }
+                    else{
+                        $('#newControlEntryPanel').removeClass('hidden');
+                        arrangeNewControlPanelForSelectedControl($('#controlType').val());
+                        scrollToView($('#newControlEntryPanel'));
+                        
+                    }
+                });
             }
+        );
+            
+        function loadViolationTypes(activeType){
+            var json = $.getJSON("/acp/violation/types")
+            .done(function(data){
+                $("#violationType").empty();
+                $.each(data, function(key, value){
+                    $("#violationType").append("<option value='" + value.id + "'>" + value.description + "</option>");
+                });
+                $("#violationType").val(activeType);
+            });
+        }
+        
+        function loadControlTypesFor(violationType, selectedControlType){
+            if(violationType == 0){
+                return;
+            }
+            var json = $.getJSON("/acp/violation/metas/" + violationType)
+            .done(function(data) {
+                $("#controlType").empty();
+                $.each(data, function(key, value){
+                    $("#controlType").append("<option value='" + value.id + "'>" + value.description + "</option>");
+                });
+                $("#controlType").val(selectedControlType);
+            })
+        }
+        
+        function arrangeNewControlPanelForSelectedControl(selectedControlType){
+            if(selectedControlType == 0){
+                return;
+            }
+            var json = $.getJSON("/acp/violation/meta/" + selectedControlType)
+            .done(function(data) {
+                $('#newControlValueLabel').html(data.description);
+                $('#newControlValueCheckboxLabel span.newControlValueCheckboxLabel').text(data.description);
+                $('#newUnit').val(data.expectedValueUnit);
+                $('#expectedValue').html(data.expectedValue + " (" + data.expectedValueUnit + ")");
+                
+                switch (data.type) {
+                case 0:
+                    $('#newControlValueTextRow').removeClass("hidden");
+                    $('#newControlValueCheckboxRow').addClass("hidden");
+                    break;
+
+                case 1:
+                    $('#newControlValueTextRow').addClass("hidden");
+                    $('#newControlValueCheckboxRow').removeClass("hidden");
+//                     $("[id='newControlValueCheckbox']").bootstrapSwitch('labelText', data.description);
+                    break;
+
+                default:
+                    break;
+                }
+            })
+        }
+        
+        function scrollToView(target)
+        {
+            if(target){
+                $('html,body').animate({
+                    scrollTop: target.offset().top
+                }, 1000);
+            }
+        }
+
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"); 
+            var results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
         </script>
     </jsp:attribute>
 
     <jsp:body>
-    <form id="violationForm" action="save" method="post">
+    <form id="violationForm" action="/acp/violation/save" method="post">
         <div class="row">
-            <div class="col-xs-3 col-xs-offset-1">
+            <div class="col-md-3 col-md-offset-1">
                 <div class="row">
                     <img class="img-responsive img-rounded" src="/acp/image/${violation.getId()}"></img>
                 </div>
@@ -67,21 +147,23 @@
                     <table class="table table-responsive table-striped">
                         <caption class="caption">Violation Items</caption>
                         <tr>
+                            <th>Violation Type</th>
                             <th>Control Type</th>
                             <th>Value</th>
                             <th>&nbsp;</th>
                         </tr>
                         <c:forEach items="${violation.getViolationData()}" var="item">
                         <tr>
+                            <td>${item.getViolationMetaTypeDescription()}</td>
                             <td>${item.getViolationMetaDescription()}</td>
                             <td>${item.getValue()} ${item.getUnit().toString()}</td>                         
-                            <td><a href="/acp/violation/removecontrol/${item.getId()}">remove</a></td>                         
+                            <td><a class="btn btn-success" href="/acp/violation/removecontrol/${item.getId()}">remove</a></td>                         
                         </tr>
                         </c:forEach>
                     </table>
                 </div>
                 
-                <div class='row'>
+                <div class='row' id='violationTypeRow'>
                     <div class="form-group">
                         <label for="violationType" class="control-label">Violation Type</label>
                         <select class="form-control" id="violationType" name="violationType">
@@ -90,27 +172,40 @@
                     </div>
                 </div>
             
-                <div class='row'>
+                <div class='row' id='controlTypeRow'>
                     <div class="form-group">
                         <label for="controlType" class="control-label">Control Type</label> 
                         <select class="form-control" id="controlType" name="controlType">
                             <option value="0">Please select violation type first</option>
                         </select>
-                        <input type="hidden" id="metaDescription" name="metaDescription" value="${selectedMetaDescription}">
                     </div>
                 </div>
             
-                <div class="row ${selectedControlType==0?'hidden':''}">
-                    <div class="panel panel-default">
+            
+                <div class="row" id='addNewControlButtonRow'>
+                    <button class="btn btn-danger" id="addNewControlButton">Add new violation check...</button>
+                </div>
+                
+                <div class="row" id="newControlEntryPanel">
+                    <div class="panel panel-danger">
                         <div class="panel-heading">
                             <h3 class="panel-title">Details</h3>
                         </div>
                         <div class="panel-body">
-                            <div class="row">
+                            <div class="row" id="newControlValueTextRow">
                                 <div class="form-group">
-                                    <label for='newControlValue' class='control-label'>newControlValue</label>
+                                    <label for='newControlValue' class='control-label' id="newControlValueLabel">newControlValue</label>
                                     <input type='text' class='form-control' id='newControlValue' name='newControlValue'>
                                 </div>
+                            </div>  
+                        
+                            <div class="row"  id="newControlValueCheckboxRow">
+                                 <div class="form-group">
+                                    <label id="newControlValueCheckboxLabel" for="newControlValueCheckbox">
+                                        <span class="newControlValueCheckboxLabel">#newControlValueCheckboxLabel</span>
+                                        <input type='checkbox' id='newControlValueCheckbox' name='newControlValueCheckbox' class="checkbox">
+                                    </label>
+                                 </div>
                             </div>  
                         
                             <div class="row">
@@ -118,15 +213,15 @@
                                     <label for='newUnit' class='control-label'>Unit</label>
                                     <select class='form-control' id='newUnit' name='newUnit'>
                                         <optgroup label='length'>
-                                            <option>mm</option>
-                                            <option>cm</option>
-                                            <option>m</option>
+                                            <option>MM</option>
+                                            <option>CM</option>
+                                            <option>M</option>
                                         </optgroup>
                                         <optgroup label='slope'>
-                                            <option>degree</option>
+                                            <option>DEGREE</option>
                                         </optgroup>
                                         <optgroup label='boolean'>
-                                            <option>TrueFalse</option>
+                                            <option>BOOLEAN</option>
                                         </optgroup>
                                     </select>
                                 </div>
@@ -134,14 +229,14 @@
                         
                             <div class="row">
                                 <div class='form-group'>
-                                    <label for='%s' class='control-label'>Expected value</label>
-                                    <p class='form-control' id='%s'>%s</p>
+                                    <label for='expectedValue' class='control-label'>Expected value</label>
+                                    <p class='form-control' id='expectedValue'>...</p>
                                 </div>
                             </div>
                             
                             <div class="row">
                                 <div class='form-group'>
-                                  <button class="btn btn-warning" id="addControl" name="addControl" value="1">Add</button>
+                                  <button class="btn btn-warning" id="addControl" name="operation" value="add">Add</button>
                                 </div>
                             </div>
                             
@@ -150,7 +245,7 @@
                 </div>
                 
             </div>
-            <div class="col-xs-6 col-xs-offset-1">
+            <div class="col-md-6 col-md-offset-1">
                 <div class='row'>
                     <div class="form-group">
                         <label for="violationTitle" class="control-label">Violation Title</label>
@@ -169,14 +264,14 @@
                     <div class="form-group">
                         <label for="violationlocation" class="control-label">Violation Location</label>
                         <div id="map-container" class="form-control"></div>
-                        <input class="form-control control" id="violationLocation" name="violationLocation" value="${violation.getLocation()}" disabled>
+                        <input class="form-control control" id="violationLocation" name="violationLocation" value="${violation.getLocation()}" readonly>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group ">
-                        <button class="btn btn-primary" id="saveViolation" name="saveViolation" value="1">Save Violation</button>
-                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" id="saveViolationButton" name="operation" value="save">Save Violation</button>
+                        <button class="btn btn-secondary" id="cancelButton" name="operation" value="cancel">Cancel</button>
                     </div>
                 </div>
                 
