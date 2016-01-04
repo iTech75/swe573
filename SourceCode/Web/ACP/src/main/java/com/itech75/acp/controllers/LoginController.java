@@ -1,24 +1,26 @@
 package com.itech75.acp.controllers;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
-import com.itech75.acp.dal.DbHelper;
+import com.itech75.acp.common.WebHelper;
+import com.itech75.acp.dal.LoginDAL;
 import com.itech75.acp.entities.LoginRequest;
 import com.itech75.acp.entities.LoginResponse;
 
 @Controller
+@EnableWebSecurity
 public class LoginController {
 
 	@RequestMapping(value="/login", method=RequestMethod.GET)
@@ -26,13 +28,15 @@ public class LoginController {
 		return "login";
 	}
 	
-	@RequestMapping(value="/login/", method=RequestMethod.POST)
-	public String login(@ModelAttribute("username") String username, @ModelAttribute("password") String password, Model model, BindingResult result)
+	@RequestMapping(value="/login", method=RequestMethod.POST)
+	public String login(@ModelAttribute("username") String username, @ModelAttribute("password") String password, BindingResult result, HttpSession session)
 	{
 		if(result.hasErrors()){
 			return null;
 		}
-		if(checkLogin(username, password)){
+		int userid = LoginDAL.checkLogin(username, password);
+		if(userid > 0){
+			session.setAttribute("userid", userid);
 			return "home";
 		}
 		return "login";
@@ -41,29 +45,38 @@ public class LoginController {
 	@RequestMapping(value="/logins/", method=RequestMethod.POST)
 	public @ResponseBody LoginResponse logins(@RequestBody final LoginRequest loginRequest)
 	{
-		boolean loginresult = checkLogin(loginRequest.getUsername(), loginRequest.getPassword());
+		boolean loginresult = LoginDAL.checkLogin(loginRequest.getUsername(), loginRequest.getPassword()) > 0;
 		return new LoginResponse(loginresult);
 	}
 	
-	private boolean checkLogin(String username, String password){
-		String sql = "select username from acp.users where email=? and password=?";
-		try {
-			DbHelper dbhelper = new DbHelper();
-			Connection connection = dbhelper.getConnection();
-			PreparedStatement statement = dbhelper.prepareStatement(connection, sql);
-			statement.setString(1, username);
-			statement.setString(2, password);
-			ResultSet resultSet = statement.executeQuery();
-			if(resultSet.next()){
-				return true;
+	@RequestMapping(value="/register", method=RequestMethod.GET)
+	public String register()
+	{
+		return "register";
+	}
+	
+	@RequestMapping(value="/register", method=RequestMethod.POST)
+	public ModelAndView registerPost(HttpServletRequest request, HttpServletResponse response)
+	{
+		String username = request.getParameter("username");
+		String email = request.getParameter("email");
+		String password = request.getParameter("password");
+		String passwordRepeat = request.getParameter("passwordRepeat");
+		
+		ModelAndView model = new ModelAndView("register");
+		if(password.equals(passwordRepeat)){
+			String result = LoginDAL.registerUser(username, email, password);
+			if(result == null){
+				model = new ModelAndView("home");
+				WebHelper.showSuccess(model, "User created!");
 			}
-			resultSet.close();
-			statement.close();
-			connection.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			else{
+				WebHelper.showError(model, result);
+			}
 		}
-		return false;
+		else{
+			WebHelper.showError(model, "Passwords do not match!");
+		}
+		return model;
 	}
 }

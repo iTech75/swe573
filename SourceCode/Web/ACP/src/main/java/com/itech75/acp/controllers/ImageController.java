@@ -3,6 +3,7 @@ package com.itech75.acp.controllers;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import com.itech75.acp.dal.ViolationDAL;
 
 @Controller
 @RequestMapping(value = "/image")
+@EnableWebSecurity
 public class ImageController {
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)

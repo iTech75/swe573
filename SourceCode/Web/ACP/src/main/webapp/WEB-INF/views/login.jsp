@@ -4,7 +4,7 @@
 <t:master pageTitle="ACP Login">
     <div class="row col-md-6 col-md-offset-3">
         <h1>ACP Login</h1>
-        <form action="/acp/login/" method="post" id="loginForm" name="loginForm">
+        <form action="${pageContext.request.contextPath}/login" method="post" id="loginForm" name="loginForm">
             <div class="form-group has-warning has-feedback">
                 <label for="username" class="control-label">User Name</label>
                 <div class="input-group">
@@ -21,6 +21,7 @@
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Login</button>
             </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>
     </div>
 </t:master>

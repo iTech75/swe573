@@ -1,12 +1,14 @@
 package com.itech75.acp.controllers;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.itech75.acp.dal.CommentDAL;
+import com.itech75.acp.dal.LoginDAL;
 import com.itech75.acp.dal.ViolationDAL;
 import com.itech75.acp.dal.ViolationDataDAL;
 import com.itech75.acp.dal.ViolationMetaDAL;
@@ -34,6 +38,7 @@ import com.itech75.acp.common.WebHelper;
  */
 @Controller
 @RequestMapping(value = "/violation")
+@EnableWebSecurity
 public class ViolationController {
 
 	/*
@@ -245,4 +250,26 @@ public class ViolationController {
 		model.addObject("violationType", (violationType != null && !violationType.equals("")) ? violationType : "0");
 		model.addObject("selectedControlType", (selectedControlType != null && !selectedControlType.equals("")) ? selectedControlType : "0");
 	}
+	
+	@RequestMapping(value = "addcomment")
+	public ModelAndView post(HttpServletRequest request, HttpServletResponse response, HttpSession session, Principal principal) throws IOException {
+		ModelAndView model = new ModelAndView("violation");
+		Violation violation = (Violation)session.getAttribute("violation");
+		if(principal.getName() != null){
+			int userid = LoginDAL.findUserId(principal.getName());
+			String content = request.getParameter("newComment");
+			if(CommentDAL.addComment(violation.getId(), content, userid)){
+				WebHelper.showSuccess(model, "Your comment added!");
+				response.sendRedirect(request.getHeader("referer")+"#comments");
+			}
+			else{
+				WebHelper.showSuccess(model, "Error occured, please try later!");			
+			}
+		}
+		else{
+			model = new ModelAndView("login");
+		}
+		
+		return model;
+	}	
 }

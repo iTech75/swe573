@@ -11,7 +11,7 @@
                 <h2 class="text-center">Our engineers will work hard not to make you sorry again!</h2>
                 <h5 class="text-center">Date of error: ${datetime}</h5>
                 <h5 class="text-center">url: ${url}</h5>
-<%--                 <h5 class="text-center">message: ${exception.getMessage()}</h5> --%>
+                 <h5 class="text-center">message: ${exception.getMessage()}</h5>
             </div>
             <div class="col-md-7">
                 <img src="/acp/resources/images/sbC50.jpg" class="img-responsive img-rounded" style="margin: 0 auto"/>

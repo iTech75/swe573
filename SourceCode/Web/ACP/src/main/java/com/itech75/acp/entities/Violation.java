@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.itech75.acp.dal.CommentDAL;
 import com.itech75.acp.dal.ViolationDataDAL;
 
 public class Violation implements Serializable{
@@ -106,6 +107,14 @@ public class Violation implements Serializable{
 	public boolean removeViolationData(int id){
 		List<ViolationData> input = getViolationData();
 		return input.removeIf(p -> p.getId() == id);
+	}
+	
+	private List<Comment> comments;
+	public List<Comment> getComments(){
+		if(comments == null){
+			comments = CommentDAL.loadCommentsForViolation(id);
+		}
+		return comments;
 	}
 	
 	public Violation(){

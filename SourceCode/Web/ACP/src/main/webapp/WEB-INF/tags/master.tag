@@ -53,6 +53,27 @@
                     <li><a href="#about">About</a></li>
                     <li><a href="/acp/violation">Violations</a></li>
                 </ul>
+                <form id="searchForm" name="searchForm" method="get" class="navbar-form navbar-left" role="search">
+                    <div class="form-group">
+                      <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+                <c:if test="${pageContext.request.remoteUser != null}">
+                    <form id="logoutForm" name="logoutForm" class="navbar-form navbar-right" action="/acp/logout" method="post">
+                        <div class="form-group">
+                            <label class="form-control">${pageContext.request.remoteUser}</label>
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Logout">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    </form>
+                </c:if>
+                <c:if test="${pageContext.request.remoteUser == null}">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active"><a href="/acp/login">Login</a></li>
+                        <li class="active"><a href="/acp/register">Register</a></li>
+                    </ul>
+                </c:if>
             </div>
         </div>
     </nav>
