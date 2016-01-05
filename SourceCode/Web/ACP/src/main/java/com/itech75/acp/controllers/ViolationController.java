@@ -1,29 +1,30 @@
 package com.itech75.acp.controllers;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.itech75.acp.dal.CommentDAL;
-import com.itech75.acp.dal.LoginDAL;
 import com.itech75.acp.dal.ViolationDAL;
 import com.itech75.acp.dal.ViolationDataDAL;
 import com.itech75.acp.dal.ViolationMetaDAL;
 import com.itech75.acp.dal.ViolationTypeDAL;
+import com.itech75.acp.dal.VoteDAL;
 import com.itech75.acp.entities.Violation;
+import com.itech75.acp.entities.ViolationDTO;
 import com.itech75.acp.entities.ViolationData;
 import com.itech75.acp.entities.ViolationMeta;
 import com.itech75.acp.entities.ViolationResult;
@@ -32,22 +33,29 @@ import com.itech75.acp.common.ResultBase;
 import com.itech75.acp.common.ReturnStatusCodes;
 import com.itech75.acp.common.Units;
 import com.itech75.acp.common.WebHelper;
+import com.itech75.acp.core.BusinessEngine;
 
 /*
  * Violation related functionalities implemented 
  */
 @Controller
 @RequestMapping(value = "/violation")
-@EnableWebSecurity
 public class ViolationController {
 
+	@RequestMapping(method = RequestMethod.POST)
+	public @ResponseBody ViolationResult post(@RequestBody final ViolationDTO violation) {
+		return new ViolationResult(ViolationDAL.createViolation(violation), "");
+	}
+	
 	/*
 	 * Lists all violations which complies the given rule (i.e. last 5 violations) 
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView listViolations() {
+	public ModelAndView listViolations(@RequestParam String query, HttpSession session) {
 		ModelAndView model = new ModelAndView("violations");
-		model.addObject("violations", ViolationDAL.getViolations());
+		
+		int userid = session.getAttribute("userid") != null ? (int)session.getAttribute("userid") : 0;
+		model.addObject("violations", ViolationDAL.getViolations(query, userid));
 		return model;
 	}
 
@@ -82,6 +90,29 @@ public class ViolationController {
 		Violation violation = null;
 		violation = ViolationDAL.getViolation(id);
 		session.setAttribute("violation", violation);
+		return model;
+	}
+
+	@RequestMapping(value = "nearby", method = RequestMethod.GET)	
+	public ModelAndView nearby(HttpSession session) throws Exception {
+		ModelAndView model = new ModelAndView("nearby");
+		return model;
+	}
+
+	@RequestMapping(value = "findnearby", method = RequestMethod.GET)	
+	public ModelAndView findNearby(HttpServletRequest request) throws Exception {
+		ModelAndView model = new ModelAndView("nearby");
+		String location = request.getParameter("violationLocation");
+		if(location == null || location.equals("")){
+			WebHelper.showWarning(model, "Please click on a location on the map");
+		}
+		else{
+			List<Violation> result = BusinessEngine.findNearbyViolations(location);
+			model.addObject("violations", result);
+			if(result.isEmpty()){
+				WebHelper.showMessage(model, "No nearby violation found to selected location");
+			}
+		}
 		return model;
 	}
 
@@ -166,7 +197,8 @@ public class ViolationController {
 		String[] latLon = violationLocation.split(",");
 		violation.setLatitude(Double.parseDouble(latLon[0]));
 		violation.setLongitude(Double.parseDouble(latLon[1]));
-
+		violation.setSeverity(BusinessEngine.calculateViolationSeverity(violation));
+		
 		ViolationDAL.save(violation);
 		WebHelper.showSuccess(model, "Violation saved...");
 		return model;
@@ -219,12 +251,9 @@ public class ViolationController {
 			unit = Units.valueOf(buffer);
 		}
 		
-		return ResultBase.sendSuccess(new ViolationData(0, 0, metaId, value, unit), "New control added to the violation");
-	}
-
-	@RequestMapping(method = RequestMethod.POST)
-	public @ResponseBody ViolationResult post(@RequestBody final Violation violation) {
-		return new ViolationResult(ViolationDAL.createViolation(violation), "");
+		ViolationData data = new ViolationData(0, 0, metaId, value, unit);
+		data.setSeverity(BusinessEngine.calculateViolationControlSeverity(violationMeta, data));
+		return ResultBase.sendSuccess(data, "New control added to the violation");
 	}
 
 	@RequestMapping(value="removecontrol/{controlid}", method = RequestMethod.GET)
@@ -252,24 +281,142 @@ public class ViolationController {
 	}
 	
 	@RequestMapping(value = "addcomment")
-	public ModelAndView post(HttpServletRequest request, HttpServletResponse response, HttpSession session, Principal principal) throws IOException {
+	public ModelAndView addcomment(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
 		ModelAndView model = new ModelAndView("violation");
 		Violation violation = (Violation)session.getAttribute("violation");
-		if(principal.getName() != null){
-			int userid = LoginDAL.findUserId(principal.getName());
+		if(session != null && session.getAttribute("userid") != null){
+			int userid = (int)session.getAttribute("userid");
 			String content = request.getParameter("newComment");
 			if(CommentDAL.addComment(violation.getId(), content, userid)){
 				WebHelper.showSuccess(model, "Your comment added!");
-				response.sendRedirect(request.getHeader("referer")+"#comments");
+				String url = String.format("%s/violation/%d#comments", request.getContextPath(), violation.getId());
+				response.sendRedirect(url);
 			}
 			else{
-				WebHelper.showSuccess(model, "Error occured, please try later!");			
+				WebHelper.showError(model, "Error occured, please try later!");			
 			}
 		}
 		else{
 			model = new ModelAndView("login");
 		}
 		
+		return model;
+	}
+	
+	@RequestMapping(value = "vote")
+	public ModelAndView vote(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+		ModelAndView model = new ModelAndView("violation");
+		Violation violation = (Violation)session.getAttribute("violation");
+		if(session != null && session.getAttribute("userid") != null){
+			int userid = (int)session.getAttribute("userid");
+			int vote = Integer.parseInt(request.getParameter("vote"));
+			String operation = request.getParameter("operation");
+			switch (operation) {
+			case "vote":
+				if(VoteDAL.addVote(violation.getId(), vote, userid)){
+					WebHelper.showSuccess(model, "Your vote added!");
+					String url = String.format("%s/violation/%d", request.getContextPath(), violation.getId());
+					response.sendRedirect(url);
+				}
+				else{
+					WebHelper.showError(model, "Error occured, please try later!");			
+				}
+				break;
+
+			case "deletevote":
+				if(VoteDAL.deleteVoteForViolation(violation.getId(), userid)){
+					violation.clearVoteForUser();
+					WebHelper.showSuccess(model, "Your vote deleted!");
+					String url = String.format("%s/violation/%d", request.getContextPath(), violation.getId());
+					response.sendRedirect(url);
+				}
+				else{
+					WebHelper.showError(model, "Error occured, please try later!");			
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+		else{
+			model = new ModelAndView("login");
+		}
+		
+		return model;
+	}
+	
+	@RequestMapping(value = "fix", method = RequestMethod.POST)
+	public ModelAndView fix(@RequestParam("photo") MultipartFile file, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+		ModelAndView model = new ModelAndView("violation");
+		Violation violation = (Violation)session.getAttribute("violation");
+		if(session != null && session.getAttribute("userid") != null){
+			int userid = (int)session.getAttribute("userid");
+			byte[] photo = file.getBytes();
+			ResultBase<?> result = BusinessEngine.fixViolation(violation, photo, userid);
+			if(result.getStatusCode() == ReturnStatusCodes.SUCCESS){
+				String url = String.format("%s/violation/%d", request.getContextPath(), violation.getId());
+				response.sendRedirect(url);
+			}
+			else{
+				WebHelper.showError(model, result.getMessage());
+			}
+		}
+		else{
+			model = new ModelAndView("login");
+		}
+		return model;
+	}	
+	
+	@RequestMapping(value = "changephoto", method = RequestMethod.POST)
+	public ModelAndView changephoto(@RequestParam("photo") MultipartFile file, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+		ModelAndView model = new ModelAndView("violation");
+		Violation violation = (Violation)session.getAttribute("violation");
+		if(session != null && session.getAttribute("userid") != null){
+			byte[] photo = file.getBytes();
+			boolean result = ViolationDAL.changeViolationImage(violation.getId(), photo);
+			if(result){
+				String url = String.format("%s/violation/%d", request.getContextPath(), violation.getId());
+				response.sendRedirect(url);
+			}
+			else{
+				WebHelper.showError(model, "Could not change the image please try again!");
+			}
+		}
+		else{
+			model = new ModelAndView("login");
+		}
+		return model;
+	}	
+	
+	@RequestMapping(value = "approvereject", method = RequestMethod.POST)
+	public ModelAndView approve(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+		ModelAndView model = new ModelAndView("violation");
+		Violation violation = (Violation)session.getAttribute("violation");
+		String operation = request.getParameter("operation");
+		if(session != null && session.getAttribute("userid") != null && operation != null){
+			int userid = (int)session.getAttribute("userid");
+			ResultBase<?> result = null;
+			if(operation.equals("approve")){
+				result = BusinessEngine.approveFix(violation, userid);
+			}
+			else if(operation.equals("reject")){
+				result = BusinessEngine.rejectFix(violation, userid);
+			}
+			else{
+				return model;
+			}
+			if(result.getStatusCode() == ReturnStatusCodes.SUCCESS){
+				String url = String.format("%s/violation/%d", request.getContextPath(), violation.getId());
+				response.sendRedirect(url);
+			}
+			else{
+				WebHelper.showError(model, result.getMessage());
+			}
+		}
+		else{
+			model = new ModelAndView("login");
+		}
 		return model;
 	}	
 }

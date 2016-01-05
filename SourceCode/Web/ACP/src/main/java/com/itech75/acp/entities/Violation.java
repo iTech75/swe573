@@ -5,8 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.itech75.acp.common.SeverityLevels;
+import com.itech75.acp.common.ViolationStates;
 import com.itech75.acp.dal.CommentDAL;
+import com.itech75.acp.dal.ViolationDAL;
 import com.itech75.acp.dal.ViolationDataDAL;
+import com.itech75.acp.dal.VoteDAL;
 
 public class Violation implements Serializable{
 
@@ -24,6 +28,9 @@ public class Violation implements Serializable{
 	private double longitude;
 	private int userId;
 	private String userName;
+	private double severity;
+	private double publicSeverity;
+	private ViolationStates state;
 
 	public int getId() {
 		return id;
@@ -104,6 +111,48 @@ public class Violation implements Serializable{
 		return violationData;
 	}
 	
+	public double getSeverity() {
+		return severity;
+	}
+	public SeverityLevels getSeverityAsEnum(){
+		return SeverityLevels.values()[(int)severity];
+	}
+	public int getSeverityAsPercent(){
+		return (int)(severity / 4.0 * 100.0);
+	}
+	public int getSeverityForSection(int section){
+		int result =   section * 25 - getSeverityAsPercent();
+		result = result < 0 ? 25 : 25 - result;
+		result = Math.max(result, 0);
+		return result;
+	}
+	public void setSeverity(double severity) {
+		this.severity = severity;
+	}
+	public double getPublicSeverity() {
+		return publicSeverity;
+	}
+	public SeverityLevels getPublicSeverityAsEnum(){
+		return SeverityLevels.values()[(int)publicSeverity];
+	}
+	public int getPublicSeverityAsPercent(){
+		return (int)(publicSeverity / 4.0 * 100.0);
+	}
+	public int getPublicSeverityForSection(int section){
+		int result =   section * 25 - getPublicSeverityAsPercent();
+		result = result < 0 ? 25 : 25 - result;
+		result = Math.max(result, 0);
+		return result;
+	}
+	public void setPublicSeverity(double publicSeverity) {
+		this.publicSeverity = publicSeverity;
+	}
+	public ViolationStates getState() {
+		return state;
+	}
+	public void setState(ViolationStates state) {
+		this.state = state;
+	}
 	public boolean removeViolationData(int id){
 		List<ViolationData> input = getViolationData();
 		return input.removeIf(p -> p.getId() == id);
@@ -121,20 +170,20 @@ public class Violation implements Serializable{
 
 	}
 	
-	public Violation(int id, String title, String description, byte[] image, Date timestamp, 
-			double latitude, double longitude, int userId) {
-		super();
-		this.id = id;
-		this.title = title;
-		this.description = description;
-		this.image = image;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.timeStamp = timestamp;
-		this.userId = userId;
-		
-		violationData = ViolationDataDAL.getViolationDataList(id);
-	}
+//	public Violation(int id, String title, String description, byte[] image, Date timestamp, 
+//			double latitude, double longitude, int userId) {
+//		super();
+//		this.id = id;
+//		this.title = title;
+//		this.description = description;
+//		this.image = image;
+//		this.latitude = latitude;
+//		this.longitude = longitude;
+//		this.timeStamp = timestamp;
+//		this.userId = userId;
+//		
+//		violationData = ViolationDataDAL.getViolationDataList(id);
+//	}
 	
 	public String getSince(){
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm");
@@ -143,5 +192,21 @@ public class Violation implements Serializable{
 	
 	public String getLocation(){
 		return String.format("%s, %s", getLatitude(), getLongitude());
+	}
+	
+	public byte[] getFixImage(){
+		return ViolationDAL.getViolationFixImage(id);
+	}
+
+	private int myVote = -99;
+	public int getVoteForUser(int userid){
+		if(myVote == -99){
+			myVote = VoteDAL.getVoteForViolation(id, userid);
+		}
+		return myVote;
+	}
+	
+	public void clearVoteForUser(){
+		myVote = -99;
 	}
 }

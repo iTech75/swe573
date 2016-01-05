@@ -1,6 +1,12 @@
 package com.itech75.acp.entities;
 
-public class ViolationResult {
+import java.io.Serializable;
+
+public class ViolationResult implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8359713833927104772L;
 	private boolean result;
 	private String message;
 	public boolean isResult() {

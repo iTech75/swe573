@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -186,6 +187,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             InputStream in = getContentResolver().openInputStream(
                     Uri.parse(mCurrentPhotoPath));
             Bitmap bitmap = BitmapFactory.decodeStream(in, null, bmOptions);
+            Matrix m = new Matrix();
+            m.postRotate(90);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, true);
             imageView.setImageBitmap(bitmap);
         } catch (FileNotFoundException e) {
             // do something

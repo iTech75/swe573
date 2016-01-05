@@ -16,7 +16,14 @@ public class ViolationData implements Serializable{
 	private String violationMetaTypeDescription;
 	private String value;
 	private Units unit;
+	private double severity;
 	
+	public double getSeverity() {
+		return severity;
+	}
+	public void setSeverity(double severity) {
+		this.severity = severity;
+	}
 	public int getId() {
 		return id;
 	}

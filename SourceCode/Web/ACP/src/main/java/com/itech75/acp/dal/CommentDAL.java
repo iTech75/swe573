@@ -40,8 +40,15 @@ public class CommentDAL {
 	}
 	
 	public static boolean addComment(int violationId, String comment, int userId) {
+		return addComment(violationId, comment, userId, 0);
+	}
+	
+	public static boolean addSystemLogToComment(int violationId, String comment, int userId) {
+		return addComment(violationId, comment, userId, 1);
+	}
+	
+	public static boolean addComment(int violationId, String comment, int userId, int type) {
 		String sql = "insert into acp.comments (violation_id, content, type, userid) values(?,?,?,?)";
-		int type = 0; //User comment
 		
 		DbHelper dbhelper = new DbHelper();
 		try (Connection connection = dbhelper.getConnection()){

@@ -1,10 +1,11 @@
 package com.itech75.acp.controllers;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,7 +21,6 @@ import com.itech75.acp.entities.LoginRequest;
 import com.itech75.acp.entities.LoginResponse;
 
 @Controller
-@EnableWebSecurity
 public class LoginController {
 
 	@RequestMapping(value="/login", method=RequestMethod.GET)
@@ -29,16 +29,32 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
-	public String login(@ModelAttribute("username") String username, @ModelAttribute("password") String password, BindingResult result, HttpSession session)
+	public ModelAndView login(@ModelAttribute("username") String username, @ModelAttribute("password") String password, 
+			            BindingResult result, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException
 	{
+		ModelAndView model = new ModelAndView("login");
 		if(result.hasErrors()){
+			WebHelper.showError(model, "Please fix the errors");
 			return null;
 		}
 		int userid = LoginDAL.checkLogin(username, password);
 		if(userid > 0){
 			session.setAttribute("userid", userid);
-			return "home";
+			session.setAttribute("username", username);
+			String url = String.format("%s/violation?query=|all", request.getContextPath());
+			response.sendRedirect(url);
 		}
+		else{
+			WebHelper.showWarning(model, "Wrong username or password, please try again!");
+		}
+		return model;
+	}
+	
+	@RequestMapping(value="/logout", method={RequestMethod.POST, RequestMethod.GET})
+	public String login(HttpServletRequest request, HttpSession session)
+	{
+		session.removeAttribute("userid");
+		session.removeAttribute("username");
 		return "login";
 	}
 	

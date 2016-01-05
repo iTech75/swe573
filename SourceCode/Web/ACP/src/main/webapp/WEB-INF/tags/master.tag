@@ -45,30 +45,42 @@
                     <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span
                         class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">ACP <small><em>(Accessibility Control Platform)</em></small></a>
+                <a class="navbar-brand" href="#">A.C.P.</a>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="/acp/">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="/acp/violation">Violations</a></li>
+                    <li><a href="/acp/violation?query=|all">Violations</a></li>
+                    <li><a href="/acp/violation?query=|my">My Violations</a></li>
+                    <li><a href="/acp/violation/nearby">Near by Violations</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Other Violation Lists<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/acp/violation?query=|open10">Last 10 Open Violations</a></li>
+                            <li><a href="/acp/violation?query=|fixcandidate10">Last 10 Fix Candidate Violations</a></li>
+                            <li><a href="/acp/violation?query=|fixed10">Last 10 Fixed Violations</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/acp/violation?query=|dangerous10">Most Dangerous Violations</a></li>
+                            <li><a href="/acp/violation?query=|dangerouspublic10">Most Dangerous Violations (public opinion)</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/acp/violation?query=|my">My Violations</a></li>
+                        </ul>
+                    </li>
                 </ul>
-                <form id="searchForm" name="searchForm" method="get" class="navbar-form navbar-left" role="search">
+                <form id="searchForm" name="searchForm" method="get" action="/acp/violation" class="navbar-form navbar-left" role="search">
                     <div class="form-group">
-                      <input type="text" class="form-control" placeholder="Search">
+                      <input type="text" class="form-control" placeholder="Search" name="query">
                     </div>
                     <button type="submit" class="btn btn-default">Submit</button>
                 </form>
-                <c:if test="${pageContext.request.remoteUser != null}">
+                <c:if test="${sessionScope != null && sessionScope.username != null}">
                     <form id="logoutForm" name="logoutForm" class="navbar-form navbar-right" action="/acp/logout" method="post">
                         <div class="form-group">
-                            <label class="form-control">${pageContext.request.remoteUser}</label>
+                            <label class="form-control">${sessionScope.username}</label>
                         </div>
                         <input type="submit" class="btn btn-primary" value="Logout">
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     </form>
                 </c:if>
-                <c:if test="${pageContext.request.remoteUser == null}">
+                <c:if test="${sessionScope != null && sessionScope.username == null}">
                     <ul class="nav navbar-nav navbar-right">
                         <li class="active"><a href="/acp/login">Login</a></li>
                         <li class="active"><a href="/acp/register">Register</a></li>
@@ -110,8 +122,8 @@
             var var_marker;
             
             function init_map() {
-                var lat = ${violation.getLatitude()};
-                var lng = ${violation.getLongitude()};
+                var lat = ${violation != null ? violation.getLatitude() : 0};
+                var lng = ${violation != null ? violation.getLongitude() : 0};
                 var var_location = new google.maps.LatLng(lat,lng);
                 
                 var var_mapoptions = {

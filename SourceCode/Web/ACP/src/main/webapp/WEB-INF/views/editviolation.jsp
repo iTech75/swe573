@@ -134,7 +134,7 @@
     </jsp:attribute>
 
     <jsp:body>
-    <form id="violationForm" action="/acp/violation/save" method="post">
+    <form id="violationForm" action="${pageContext.request.contextPath}/violation/save" method="post">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <div class="row">
             <div class="col-md-3 col-md-offset-1">
