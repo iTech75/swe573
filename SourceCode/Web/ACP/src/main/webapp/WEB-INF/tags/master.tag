@@ -50,10 +50,9 @@
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="/acp/violation?query=|all">Violations</a></li>
-                    <li><a href="/acp/violation?query=|my">My Violations</a></li>
                     <li><a href="/acp/violation/nearby">Near by Violations</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Other Violation Lists<span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Violation Lists<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/acp/violation?query=|open10">Last 10 Open Violations</a></li>
                             <li><a href="/acp/violation?query=|fixcandidate10">Last 10 Fix Candidate Violations</a></li>
@@ -196,7 +195,7 @@
                 google.maps.event.addListener(map, 'dragend', function() {
                     $('#you_location_img').css('background-position', '0px 0px');
                 });
-            
+
                 firstChild.addEventListener('click', function() {
                     var imgX = '0';
                     var animationInterval = setInterval(function(){
