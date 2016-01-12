@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -248,7 +249,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         showProgress(true);
         // Make RESTful webservice call using AsyncHttpClient object
         AsyncHttpClient client = new AsyncHttpClient();
-        client.post(this, Constants.SERVICE_VIOLATION, params, Constants.SERVICE_CONTENT_TYPE, new AsyncHttpResponseHandler() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String serverAddress = sharedPref.getString("ServerAddress", "");
+        client.post(this, serverAddress + Constants.SERVICE_VIOLATION, params, Constants.SERVICE_CONTENT_TYPE, new AsyncHttpResponseHandler() {
         //client.post(this, "http://192.168.43.215:30188/api/violation", params, "application/json", new AsyncHttpResponseHandler() {
             // When the response returned by REST has Http response code '200'
             @Override
