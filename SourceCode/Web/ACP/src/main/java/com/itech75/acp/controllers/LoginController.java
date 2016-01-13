@@ -2,6 +2,7 @@ package com.itech75.acp.controllers;
 
 import java.io.IOException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,6 +21,7 @@ import com.itech75.acp.dal.LoginDAL;
 import com.itech75.acp.entities.LoginRequest;
 import com.itech75.acp.entities.LoginResponse;
 
+
 @Controller
 public class LoginController {
 
@@ -30,21 +32,26 @@ public class LoginController {
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	public ModelAndView login(@ModelAttribute("username") String username, @ModelAttribute("password") String password, 
-			            BindingResult result, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException
+			            BindingResult result, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException, ServletException
 	{
-		ModelAndView model = new ModelAndView("login");
+		ModelAndView model = null;
 		if(result.hasErrors()){
+			model = new ModelAndView("login");
 			WebHelper.showError(model, "Please fix the errors");
-			return null;
+			return model;
 		}
 		int userid = LoginDAL.checkLogin(username, password);
 		if(userid > 0){
 			session.setAttribute("userid", userid);
 			session.setAttribute("username", username);
-			String url = String.format("%s/violation?query=|all", request.getContextPath());
-			response.sendRedirect(url);
+			//String url = String.format("%s/violation?query=|all", request.getContextPath());
+			//response.sendRedirect(url);
+			request.getRequestDispatcher("home").forward(request, response);
+			
+			return null;
 		}
 		else{
+			model = new ModelAndView("login");
 			WebHelper.showWarning(model, "Wrong username or password, please try again!");
 		}
 		return model;

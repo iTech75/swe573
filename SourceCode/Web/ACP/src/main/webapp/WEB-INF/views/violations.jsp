@@ -8,7 +8,7 @@
     
     <c:forEach items="${violations}" var="violation">
         <div class="row">
-            <div class="col-md-3"><a href="#" class="thumbnail"><img src="/acp/image/${violation.getId()}"></img></a></div>
+            <div class="col-md-3"><a href="#" class="thumbnail"><img class="img-responsive img-rounded" src="/acp/image/${violation.getId()}"></img></a></div>
             <div class="col-md-9">
                 <div class="row"><div class="col-md-1">${violation.getId()}</div></div>
                 <div class="row"><div class="col-md-4"><a href="/acp/violation/${violation.getId()}">${violation.getTitle()}</a></div></div>
